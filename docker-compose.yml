@@ -4,13 +4,13 @@ services:
   dbmysql:
     container_name: dbmysql
     image: mysql
-    #restart: always
+    restart: always
     env_file:
       - .env
     ports:
       - '3306:3306'  
     volumes: 
-      - .sqlscript_seed.sql:/docker-entrypoint-initdb.d/script.sql
+      - ./sqlscript_seed.sql:/docker-entrypoint-initdb.d/script.sql
   app:
     container_name: appnode
     #restart: always
