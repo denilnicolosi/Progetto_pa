@@ -16,12 +16,11 @@ services:
     #restart: always
     depends_on:
       - dbmysql 
-    build: ./app
+    build: app/
     env_file:
       - .env   
     ports:
       - 80:3000
     volumes:
-      - ./app:/home/node/src
-      - /home/node/src/node_modules
+      - ./app/src:/home/node/app/src/
     

@@ -1,12 +1,10 @@
 FROM node:lts-stretch-slim
 
-WORKDIR /home/node/src
-COPY . .
+WORKDIR /home/node/app
+COPY ./package*.json ./
 
+RUN npm install --global nodemon
 RUN npm install
-#ENV NODE_PATH=./build
-#RUN npm run build
-CMD ["node","main.js"]
 
-#ENV NODE_PATH=./build
-#RUN npm run build
+#CMD ["node","src/main.js"]
+CMD ["nodemon", "src/main.ts", "-L"]
