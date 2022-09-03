@@ -1,5 +1,12 @@
-async function login(req:any, res:any){
-    console.log("sono nel metodo login() di userController")
+import * as modelUser from '../models/user'
+
+
+
+export function login(email:string, password:string, res:any){
+    console.log(modelUser.trovaTutto())
+    res.send(modelUser.trovaTutto())
     }
 
-module.exports = login;
+export function user(req:any, res:any){
+    console.log("user")
+}

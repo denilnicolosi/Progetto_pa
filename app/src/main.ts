@@ -1,41 +1,30 @@
 import express from 'express';
-//import jwt from 'jsonwebtoken';
-//import { Router } from 'express';
-//import userController from './controllers/userController.ts';
-
+import { Jwt } from 'jsonwebtoken'
+import * as controllerUser from './controllers/userController';
+import * as middlewareUser from './middleware/user';
 const app = express()
 const port = 3000
-
-/*
-const router = Router();
-//const user = new userController()
-//console.log(user.name)
-
-
-router.post('/login', userController.login);
-
-
-
 app.use(express.json());
-*/
+
+app.listen(port, () => {
+  console.log(`App listening on port ${port}`)
+})
+
+
+
 app.get('/', (req:any, res:any) => {
   res.send('Hello World!')
 })
 
-app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`)
-})
-/*
 
-app.use('/user', function (req, res, next) {
-  console.log('Request Type:', req.method);
-  console.log('request -> ', req.body.var)
-  next();
-});
-*/
+app.post(
+  "/login",
+  [middlewareUser.checkInputEmail, middlewareUser.checkInputPassword],
+  function (req: any, res: any) {
+    controllerUser.login(req.body.username, req.body.password, res);
+  }
+);
 
-
-//console.log(process.env.SECRET_KEY)
 
 
 /*
