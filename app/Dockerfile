@@ -6,5 +6,5 @@ COPY ./package*.json ./
 RUN npm install --global nodemon
 RUN npm install
 
-#CMD ["node","src/main.js"]
-CMD ["nodemon", "src/main.ts", "-L"]
+#CMD ["node","src/index.ts"]
+CMD ["nodemon", "src/index.ts", "-L"]
