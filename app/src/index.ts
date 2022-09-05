@@ -1,7 +1,7 @@
 import express from 'express';
 import { Jwt } from 'jsonwebtoken'
 import * as controllerUser from './controllers/userController';
-import * as middlewareUser from './middleware/user';
+import * as middlewareUser from './middlewares/userMiddleware';
 const app = express()
 const port = 3000
 app.use(express.json());
