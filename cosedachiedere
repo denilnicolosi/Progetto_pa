@@ -1,0 +1,4 @@
+1. prevedere pagina di registrazione utenti?
+2. il login e controllo del db della validità della pass si può fare nel middleware?
+3. casi d'uso si fanno con include? 
+4. rotta per sapere il numero di token?
