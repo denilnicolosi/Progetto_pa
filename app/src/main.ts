@@ -21,7 +21,7 @@ app.post(
   "/login",
   [middlewareUser.checkInputEmail, middlewareUser.checkInputPassword],
   function (req: any, res: any) {
-    controllerUser.login(req.body.username, req.body.password, res);
+    controllerUser.login(req.body.email, req.body.password, res);
   }
 );
 
