@@ -34,14 +34,11 @@ export async function trovaTutto() {
    }
 export async function getUser(userEmail:string) {
     
-    console.log("Model: " + userEmail)
     const users = await User.findAll({
         where:{
             email: userEmail
         }
     });
-    //console.log(users.every(user => user instanceof User)); // true 
-    console.log("Model All users:", JSON.stringify(users, null, 2));
 
      return JSON.stringify(users);
    }

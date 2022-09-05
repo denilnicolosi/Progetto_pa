@@ -2,8 +2,11 @@ import express from 'express';
 import { Jwt } from 'jsonwebtoken'
 import * as controllerUser from './controllers/userController';
 import * as middlewareUser from './middlewares/userMiddleware';
+import * as dotenv from 'dotenv';
+
 const app = express()
 const port = 3000
+dotenv.config();
 app.use(express.json());
 
 app.listen(port, () => {
