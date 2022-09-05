@@ -9,6 +9,7 @@
     "@types/dotenv": "^8.2.0",
     "@types/express": "^4.17.13",
     "@types/jsonwebtoken": "^8.5.9",
+    "@types/node": "^18.7.15",
     "mysql2": "^2.3.3",
     "nodemon": "^2.0.19",
     "ts-node": "^10.9.1",
