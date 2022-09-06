@@ -1,3 +1,5 @@
+import Jwt, { JsonWebTokenError } from 'jsonwebtoken'
+
 /**
  * Check if the input body contains valid email
  * @param req user request
@@ -38,6 +40,17 @@
       } else next();
     } catch (error: any) {
       var error= "errore"
+      next(error);
+    }
+  };
+
+  export const checkJWT = function (req: any, res: any, next: any) {
+    try {
+      //checking if password is valid
+      const decoded = Jwt.verify(req.headers.jwt, <string>process.env.SECRET_KEY)
+      next();
+    } catch (error:any) {
+      var error= "errore JWT"
       next(error);
     }
   };
