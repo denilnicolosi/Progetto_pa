@@ -14,6 +14,7 @@ Progetto per il corso di programmazione avanzata A.A. 2021/2022 presso UNIVPM
 | /historymoves      | GET    | player           | SI                 |
 | /playersrank       | GET    | guest            | NO                 |
 | /chargetoken       | PUT    | admin            | SI                 |
+| /endmatch          | PUT    | player           | SI                 |
 
 Tutte le richieste sono in json
 
