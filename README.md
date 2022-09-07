@@ -107,23 +107,26 @@ Nel file ```sqlscript_seed.sql``` viene specificata la struttura del database da
 
 Spiegare le varie rotte come utilizzarle
 
+nella rotta newgame passi anche l'email del player 2
+
 ## 📑 Progettazione
 
 
 
 ### ✈️ Rotte
 
-| Rotta              | Metodo | Ruolo utente     | Autenticazione JWT |
-| ------------------ | ------ | ---------------- | ------------------ |
-| /login             | POST   | player/admin     | NO                 |
-| /newgame           | POST   | player           | SI                 |
-| /move              | POST   | player           | SI                 |
-| /playedmatch       | GET    | player           | SI                 |
-| /statusmatch       | GET    | player           | SI                 |
-| /historymoves      | GET    | player           | SI                 |
-| /playersrank       | GET    | guest            | NO                 |
-| /chargetoken       | PUT    | admin            | SI                 |
-| /endmatch          | PUT    | player           | SI                 |
+| Rotta              | Metodo | Descrizione                                                                           | Ruolo utente     | Autenticazione JWT |
+| ------------------ | ------ | ------------------------------------------------------------------------------------- | ---------------- | ------------------ |
+| /login             | POST   | Accesso con email e password per ottenere il token di autenticazione JWT              | player/admin     | NO                 |
+| /newgame           | POST   | Creazione di una nuova partita                                                        | player           | SI                 |
+| /move              | POST   | Esecuzione di una mossa in una data partita                                           | player           | SI                 |
+| /playedmatch       | GET    | Visualizza le partite eseguite dal giocatore                                          | player           | SI                 |
+| /statusmatch       | GET    | Ottiene un JSON contenente lo stato di una data partita                               | player           | SI                 |
+| /historymoves      | GET    | Visualizza la cronologia delle mosse della partita                                    | player           | SI                 |
+| /playersrank       | GET    | Ottiene un JSON con la classifica dei giocatori che hanno vinto più partite           | guest            | NO                 |
+| /token             | PUT    | Ricarica l'importo dei token di un determinato giocatore                              | admin            | SI                 |
+| /token             | GET    | Visualizza l'importo residuo dei token                                                | player           | SI                 |
+| /endmatch          | PUT    | Conclude una partita. Se la partita è tra due player deve essere eseguita da entrambi | player           | SI                 |
 
 Tutte le richieste sono in json
 
@@ -133,7 +136,7 @@ Tutte le richieste sono in json
 ### Pattern utilizzati
 - DAO con sequelize per la gestione del modello
 - singleton
-- mvc/mvp
+- mvc
 - middleware
 - factory per errori
 
