@@ -2,6 +2,7 @@ import express from 'express';
 import { Jwt } from 'jsonwebtoken'
 import * as controllerUser from './controllers/userController';
 import * as middlewareUser from './middlewares/userMiddleware';
+import * as middlewareMatch from './middlewares/matchMiddleware';
 import * as dotenv from 'dotenv';
 
 const app = express()
@@ -28,14 +29,15 @@ app.get('/', (req:any, res:any) => {
 app.post(
   "/login",
   [middlewareUser.checkInputEmail, middlewareUser.checkInputPassword],
-  function (req: any, res: any) {
-    controllerUser.login(req.body.email, req.body.password, res);
+  async function (req: any, res: any) {
+    var response = await (await controllerUser.login(req.body.email, req.body.password, res)).getResponse()
+    res.status(response.status).send(response.message)
   }
 );
 
 app.post(
   "/newgame",
-  [middlewareUser.checkJWT],
+  [middlewareUser.checkJWT, middlewareMatch.checkChallenger],
   function (req: any, res: any) {
     res.send("OK")
   }

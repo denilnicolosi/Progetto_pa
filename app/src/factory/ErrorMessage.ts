@@ -1,4 +1,4 @@
-import {HttpStatusCode, Message, Response, ErrEnum} from "./Message";
+import {HttpStatusCode, Message, Response, ErrorEnum} from "./Message";
 
 class MissingTokenErrorMsg implements Message{
     getResponse(): Response {
@@ -9,7 +9,16 @@ class MissingTokenErrorMsg implements Message{
     }
 }
 
-class InternalError implements Message {
+class EmailNotValidAddress implements Message{
+  getResponse(): Response {
+      return {
+          status: HttpStatusCode.BAD_REQUEST,
+          message: "Bad Request - Request body undefined: invalid email address"
+      }
+  }
+}
+
+class DefaultError implements Message {
     getResponse(): Response {
       return {
         message: "Ops, something went wrong",
@@ -20,14 +29,17 @@ class InternalError implements Message {
 
 export class ErrorFactory {
     constructor() {}
-    getError(type: ErrEnum): Message {
+    getError(type: ErrorEnum): Message {
       let error: Message | null = null;
       switch (type) {
-        case ErrEnum.MissingTokenErrorMsg:
+        case ErrorEnum.MissingTokenErrorMsg:
             error = new MissingTokenErrorMsg();
             break;
+        case ErrorEnum.EmailNotValidAddress:
+            error = new EmailNotValidAddress();
+            break;
         default:
-            error = new InternalError();
+            error = new DefaultError();
         }
     return error;
     }

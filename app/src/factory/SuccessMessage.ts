@@ -9,6 +9,15 @@ class JWTSuccess implements Message {
     }
   }
 
+  class LoginSuccess implements Message {
+    getResponse(): Response {
+      return {
+        message: "Login Success",
+        status: 201,
+      };
+    }
+  }
+
 class DefaultSuccess implements Message {
     getResponse(): Response {
         return {
@@ -26,6 +35,11 @@ export class SuccessFactory {
         case SuccessEnum.JWTSuccess:
           success = new JWTSuccess();
           break;
+        case SuccessEnum.LoginSuccess:
+          success = new LoginSuccess();
+          break;
+  
+          
         default:
           success = new DefaultSuccess();
     }

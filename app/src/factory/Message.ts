@@ -7,6 +7,47 @@ export interface Message {
     getResponse(): Response;
 }
 
+export enum SuccessEnum {
+    //Success dal controller
+    LoginSuccess,
+    CreateMatchSuccess,
+    MoveSuccess,
+    PlayedMatchSuccess,
+    StatusMatchSuccess,
+    HistoryMovesSuccess,
+    PlayersRankSuccess,
+    TokenGetSuccess,
+    TokenChargeSuccess,
+    EndMatchSuccess,
+    DefaultSuccess,
+
+    //success dal middleware
+
+    JWTSuccess
+}
+
+export enum ErrorEnum {
+    //errori dal controller
+    LoginFailed,
+    CreateMatchError,
+    MoveNotAllowedError,
+    PlayedMatchError,
+    StatusMatchError,
+    HistoryMovesError,
+    PlayerRankError,
+    TokenGetError,
+    TokenChargeError,
+    EndMatchError,
+    DefaultError,
+    
+    //errori del middleware
+    EmailNotValidAddress,
+
+
+    MissingTokenErrorMsg
+}
+
+
 export enum HttpStatusCode {  
     CONTINUE = 100,   
     SWITCHING_PROTOCOLS = 101,   
@@ -69,16 +110,4 @@ export enum HttpStatusCode {
     LOOP_DETECTED = 508,
     NOT_EXTENDED = 510,
     NETWORK_AUTHENTICATION_REQUIRED = 511
-}
-
-
-export enum ErrEnum {
-    MissingTokenErrorMsg,
-    NoInputTokenNumberError,
-}
-
-export enum SuccessEnum {
-    JWTSuccess,
-    DefaultSuccess,
-    UpdateSuccess,
 }
