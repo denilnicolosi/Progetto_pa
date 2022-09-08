@@ -31,7 +31,7 @@ export async function trovaTutto() {
     console.log("All users:", JSON.stringify(users, null, 2));
  
      //return await User.findAll();
-   }
+}
 export async function getUser(userEmail:string) {
     
     const users = await User.findAll({
@@ -41,4 +41,4 @@ export async function getUser(userEmail:string) {
     });
 
      return JSON.stringify(users);
-   }
+}
