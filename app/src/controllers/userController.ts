@@ -7,26 +7,27 @@ import {SuccessEnum, ErrorEnum, Message} from '../factory/Message'
 const errorFactory: ErrorFactory = new ErrorFactory();
 const successFactory: SuccessFactory = new SuccessFactory();
 
-export async function login(email:string, password:string, res:any) : Promise<Message>{
-    let [user] = JSON.parse(await modelUser.getUser(email))
+export async function login(email:string, password:string, res:any){
+    var result:any = errorFactory.getError(ErrorEnum.DefaultError).getResponse()
+    result.data = {}
 
+    let [user] = JSON.parse(await modelUser.getUser(email))
     if(user.password == password){
         console.log("COINCIDONO")
-
         let payload = {
             email:user.email,
             role:user.role
         };
         let token = await Jwt.sign(payload, <string>process.env.SECRET_KEY)
-        //return JSON.stringify({"status":"OK", "token":token})
-        return successFactory.getSuccess(SuccessEnum.LoginSuccess)
+        result = successFactory.getSuccess(SuccessEnum.LoginSuccess).getResponse()
+        result.data = {"authorization" : token}
     } else {
         console.log("NON COINCIDONO")
-        //return JSON.stringify({"status":"Login failed"})
-        return errorFactory.getError(ErrorEnum.DefaultError)
+        result = errorFactory.getError(ErrorEnum.LoginError).getResponse()
+        result.data = {}
     }
-
-    }
+    return result
+}
 
 export function user(req:any, res:any){
     console.log("user")
