@@ -19,16 +19,12 @@ export enum SuccessEnum {
     TokenGetSuccess,
     TokenChargeSuccess,
     EndMatchSuccess,
-    DefaultSuccess,
-
-    //success dal middleware
-
-    JWTSuccess
+    DefaultSuccess  
 }
 
 export enum ErrorEnum {
     //errori dal controller
-    LoginFailed,
+    LoginError,
     CreateMatchError,
     MoveNotAllowedError,
     PlayedMatchError,
@@ -42,9 +38,18 @@ export enum ErrorEnum {
     
     //errori del middleware
     EmailNotValidAddress,
+    LoginBadRequest,
+    CreateMatchBadRequest,
+    MoveBadRequest,
+    PlayedMatchBadRequest,
+    StatusMatchBadRequest,
+    HistoryMovesBadRequest,
+    PlayerRankBadRequest,
+    TokenGetBadRequest,
+    TokenChargeBadRequest,
+    EndMatchBadRequest,  
 
-
-    MissingTokenErrorMsg
+    CreateMatchNotAllowed
 }
 
 

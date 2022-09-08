@@ -1,13 +1,105 @@
 import {HttpStatusCode, Message, Response, ErrorEnum} from "./Message";
 
-class MissingTokenErrorMsg implements Message{
+class LoginError implements Message{
     getResponse(): Response {
         return {
-            status: HttpStatusCode.CREATED,
-            message: "Bad Request - Request header undefined: missing JWT Token"
+            status: HttpStatusCode.UNAUTHORIZED,
+            message: "Unauthorized - Login Failed"
         }
     }
 }
+
+class CreateMatchError implements Message{
+  getResponse(): Response {
+      return {
+          status: HttpStatusCode.INTERNAL_SERVER_ERROR,
+          message: "Internal Error on create match"
+      }
+  }
+}
+
+class MoveNotAllowedError implements Message{
+  getResponse(): Response {
+      return {
+          status: HttpStatusCode.INTERNAL_SERVER_ERROR,
+          message: "Move not allowed in this position"
+      }
+  }
+}
+
+class PlayedMatchError implements Message{
+  getResponse(): Response {
+      return {
+          status: HttpStatusCode.INTERNAL_SERVER_ERROR,
+          message: "Internal Error on get played match"
+      }
+  }
+}
+
+
+class StatusMatchError implements Message{
+  getResponse(): Response {
+      return {
+          status: HttpStatusCode.INTERNAL_SERVER_ERROR,
+          message: "Internal Error on get status match"
+      }
+  }
+}
+
+class HistoryMovesError implements Message{
+  getResponse(): Response {
+      return {
+          status: HttpStatusCode.INTERNAL_SERVER_ERROR,
+          message: "Internal Error on get history moves"
+      }
+  }
+}
+
+class PlayerRankError implements Message{
+  getResponse(): Response {
+      return {
+          status: HttpStatusCode.INTERNAL_SERVER_ERROR,
+          message: "Internal Error on get player rank"
+      }
+  }
+}
+
+class TokenGetError implements Message{
+  getResponse(): Response {
+      return {
+          status: HttpStatusCode.INTERNAL_SERVER_ERROR,
+          message: "Internal Error on get token residual"
+      }
+  }
+}
+
+class TokenChargeError implements Message{
+  getResponse(): Response {
+      return {
+          status: HttpStatusCode.INTERNAL_SERVER_ERROR,
+          message: "Internal Error on charge token"
+      }
+  }
+}
+
+class EndMatchError implements Message{
+  getResponse(): Response {
+      return {
+          status: HttpStatusCode.INTERNAL_SERVER_ERROR,
+          message: "Internal Error on end match"
+      }
+  }
+}
+
+class DefaultError implements Message {
+  getResponse(): Response {
+      return {
+        message: "Ops, something went wrong",
+        status: HttpStatusCode.INTERNAL_SERVER_ERROR,
+      };
+    }
+  }
+
 
 class EmailNotValidAddress implements Message{
   getResponse(): Response {
@@ -18,29 +110,181 @@ class EmailNotValidAddress implements Message{
   }
 }
 
-class DefaultError implements Message {
-    getResponse(): Response {
-      return {
-        message: "Ops, something went wrong",
-        status: HttpStatusCode.INTERNAL_SERVER_ERROR,
-      };
+class LoginBadRequest implements Message{
+  getResponse(): Response {
+    return {
+      status: HttpStatusCode.BAD_REQUEST,
+      message: "Bad Request - Request field: ... "
     }
   }
+}
+
+class CreateMatchBadRequest implements Message{
+  getResponse(): Response {
+    return {
+      status: HttpStatusCode.BAD_REQUEST,
+      message: "Bad Request - Request field: ... "
+    }
+  }
+}
+
+class MoveBadRequest implements Message{
+  getResponse(): Response {
+    return {
+      status: HttpStatusCode.BAD_REQUEST,
+      message: "Bad Request - Request field: ... "
+    }
+  }
+}
+
+class PlayedMatchBadRequest implements Message{
+  getResponse(): Response {
+    return {
+      status: HttpStatusCode.BAD_REQUEST,
+      message: "Bad Request - Request field: ... "
+    }
+  }
+}
+
+class StatusMatchBadRequest implements Message{
+  getResponse(): Response {
+    return {
+      status: HttpStatusCode.BAD_REQUEST,
+      message: "Bad Request - Request field: ... "
+    }
+  }
+}
+
+class HistoryMovesBadRequest implements Message{
+  getResponse(): Response {
+    return {
+      status: HttpStatusCode.BAD_REQUEST,
+      message: "Bad Request - Request field: ... "
+    }
+  }
+}
+
+class PlayerRankBadRequest implements Message{
+  getResponse(): Response {
+    return {
+      status: HttpStatusCode.BAD_REQUEST,
+      message: "Bad Request - Request field: ... "
+    }
+  }
+}
+
+class TokenGetBadRequest implements Message{
+  getResponse(): Response {
+    return {
+      status: HttpStatusCode.BAD_REQUEST,
+      message: "Bad Request - Request field: ... "
+    }
+  }
+}
+
+class TokenChargeBadRequest implements Message{
+  getResponse(): Response {
+    return {
+      status: HttpStatusCode.BAD_REQUEST,
+      message: "Bad Request - Request field: ... "
+    }
+  }
+}
+
+class EndMatchBadRequest implements Message{
+  getResponse(): Response {
+    return {
+      status: HttpStatusCode.BAD_REQUEST,
+      message: "Bad Request - Request field: ... "
+    }
+  }
+}
+
+class CreateMatchNotAllowed implements Message{
+  getResponse(): Response {
+    return {
+      status: HttpStatusCode.INTERNAL_SERVER_ERROR,
+      message: "This player has a match already open."
+    }
+  }
+}
+
+
 
 export class ErrorFactory {
     constructor() {}
+
     getError(type: ErrorEnum): Message {
-      let error: Message | null = null;
+
+      let errorClass: Message | null = null;
       switch (type) {
-        case ErrorEnum.MissingTokenErrorMsg:
-            error = new MissingTokenErrorMsg();
-            break;
+        case ErrorEnum.LoginError:
+          errorClass = new LoginError();
+          break;
+        case ErrorEnum.CreateMatchError:
+          errorClass = new CreateMatchError();
+          break;
+        case ErrorEnum.MoveNotAllowedError:
+          errorClass = new MoveNotAllowedError();
+          break;
+        case ErrorEnum.PlayedMatchError:
+          errorClass = new PlayedMatchError();
+          break;
+        case ErrorEnum.StatusMatchError:
+          errorClass = new StatusMatchError();
+          break;
+        case ErrorEnum.HistoryMovesError:
+          errorClass = new HistoryMovesError();
+          break;
+        case ErrorEnum.PlayerRankError:
+          errorClass = new PlayerRankError();
+          break;
+        case ErrorEnum.TokenGetError:
+          errorClass = new TokenGetError();
+          break; 
+        case ErrorEnum.TokenChargeError:
+          errorClass = new TokenChargeError();
+          break;   
+        case ErrorEnum.EndMatchError:
+          errorClass = new EndMatchError();
+          break;   
         case ErrorEnum.EmailNotValidAddress:
-            error = new EmailNotValidAddress();
-            break;
+          errorClass = new EmailNotValidAddress();
+          break;
+        case ErrorEnum.LoginBadRequest:
+          errorClass = new LoginBadRequest();
+          break;
+        case ErrorEnum.CreateMatchBadRequest:
+          errorClass = new CreateMatchBadRequest();
+          break;
+        case ErrorEnum.MoveBadRequest:
+          errorClass = new MoveBadRequest();
+          break;
+        case ErrorEnum.StatusMatchBadRequest:
+          errorClass = new StatusMatchBadRequest();
+          break;
+        case ErrorEnum.HistoryMovesBadRequest:
+          errorClass = new HistoryMovesBadRequest();
+          break;
+        case ErrorEnum.PlayerRankBadRequest:
+          errorClass = new PlayerRankBadRequest();
+          break;
+        case ErrorEnum.TokenGetBadRequest:
+          errorClass = new TokenGetBadRequest();
+          break;
+        case ErrorEnum.TokenChargeBadRequest:
+          errorClass = new TokenChargeBadRequest();
+          break;
+        case ErrorEnum.EndMatchBadRequest:
+          errorClass = new EndMatchBadRequest();
+          break;
+        case ErrorEnum.CreateMatchNotAllowed:
+          errorClass = new CreateMatchNotAllowed();
+          break;
+              
         default:
-            error = new DefaultError();
+          errorClass = new DefaultError();
         }
-    return error;
+    return errorClass;
     }
 }
