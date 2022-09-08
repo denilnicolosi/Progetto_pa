@@ -53,7 +53,17 @@ const errorFactory: ErrorFactory = new ErrorFactory();
   export const checkJWT = function (req: any, res: any, next: any) {
     try {
       //checking if password is valid
-      const decoded = Jwt.verify(req.headers.jwt, <string>process.env.SECRET_KEY)
+      if(req.headers.authorization){
+        const decoded = <string>Jwt.verify(req.headers.authorization, <string>process.env.SECRET_KEY)
+      }
+      else
+      {
+        var response = errorFactory.getError(ErrorEnum.DefaultError).getResponse()
+        res.status(response.status).send(response.message)
+      }
+
+      
+
       next();
     } catch (error:any) {
       var error= "errore JWT"
