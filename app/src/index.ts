@@ -1,6 +1,7 @@
 import express from 'express';
 import { Jwt } from 'jsonwebtoken'
 import * as controllerUser from './controllers/userController';
+import * as controllerMatch from './controllers/matchController';
 import * as middlewareUser from './middlewares/userMiddleware';
 import * as middlewareMatch from './middlewares/matchMiddleware';
 import * as dotenv from 'dotenv';
@@ -30,16 +31,17 @@ app.post(
   "/login",
   [middlewareUser.checkInputEmail, middlewareUser.checkInputPassword],
   async function (req: any, res: any) {
-    var response = await (await controllerUser.login(req.body.email, req.body.password, res)).getResponse()
-    res.status(response.status).send(response.message)
+    var response = await controllerUser.login(req.body.email, req.body.password, res)
+    res.status(response.status).send(JSON.stringify({message: response.message, data: response.data}))
   }
 );
 
 app.post(
   "/newgame",
   [middlewareUser.checkJWT, middlewareMatch.checkChallenger],
-  function (req: any, res: any) {
-    res.send("OK")
+  async function (req: any, res: any) {
+    var response = await controllerMatch.newMatch(req, res)
+    res.status(response.status).send(JSON.stringify({message: response.message, data: response.data}))
   }
 );
 
@@ -101,14 +103,3 @@ app.put(
 
 
 
-/*
-const jsChessEngine = require('js-chess-engine')
-const game = new jsChessEngine.Game()
-game.printToConsole()
-game.move("A2","A3")
-game.printToConsole()
-game.move("A7","A6")
-game.printToConsole()
-console.log(game.exportJson())
-console.log("--------- HISTORY ------------")
-console.log(game.getHistory())*/
