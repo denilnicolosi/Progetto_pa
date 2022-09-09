@@ -17,20 +17,17 @@ const errorFactory: ErrorFactory = new ErrorFactory();
       if (
         typeof req.body.email !== "string"     
       ) {
-        var response = errorFactory.getError(ErrorEnum.DefaultError).getResponse()
-        res.status(response.status).send(response.message)
+        next(ErrorEnum.EmailNotValidAddress)        
       } else {
         var pattern = new RegExp(/^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i);
         if (!pattern.test(req.body.email)) {
-          var response = errorFactory.getError(ErrorEnum.EmailNotValidAddress).getResponse()
-          res.status(response.status).send(response.message)
+          next(ErrorEnum.EmailNotValidAddress) 
           } else {
           next();
         }
       }
     } catch (error: any) {
-      var response = errorFactory.getError(ErrorEnum.DefaultError).getResponse()
-      res.status(response.status).send(response.message)
+      next(ErrorEnum.EmailNotValidAddress) 
     }
   };
 
@@ -41,32 +38,59 @@ const errorFactory: ErrorFactory = new ErrorFactory();
         typeof req.body.password !== "string" ||
         req.body.password.length > 50
       ) {
-        var error = "errore"
-        next(error);
+        next(ErrorEnum.LoginBadRequest)
       } else next();
     } catch (error: any) {
-      var error= "errore"
-      next(error);
+      next(ErrorEnum.LoginBadRequest)
     }
   };
 
   export const checkJWT = function (req: any, res: any, next: any) {
     try {
-      //checking if password is valid
+      //checking if jwt is valid
       if(req.headers.authorization){
         const decoded = <string>Jwt.verify(req.headers.authorization, <string>process.env.SECRET_KEY)
+        next();
       }
       else
-      {
-        var response = errorFactory.getError(ErrorEnum.DefaultError).getResponse()
-        res.status(response.status).send(response.message)
+      {        
+        next(ErrorEnum.JwtNotValid)        
       }
 
-      
-
-      next();
     } catch (error:any) {
-      var error= "errore JWT"
-      next(error);
+      next(ErrorEnum.JwtNotValid) 
+    }
+  };
+
+  export const checkRoleAdmin = function (req: any, res: any, next: any) {
+    try {
+      if(req.headers.authorization){
+        const decoded:any = <string>Jwt.decode(req.headers.authorization)
+        if(decoded.role === "admin"){
+          next();
+        }else{
+          next(ErrorEnum.ForbiddenRole)
+        }
+        
+      }
+    }
+    catch (error:any){
+      next(ErrorEnum.DefaultError)
+    } 
+  }
+
+  export const checkInputToken = function (req: any, res: any, next: any) {
+    try {
+      //checking if token input is valid
+      if (
+        typeof req.body.token === "number" &&
+        req.body.token > 0
+      ) {
+        next();        
+      } else {
+        next(ErrorEnum.TokenChargeBadRequest)
+      }
+    } catch (error: any) {
+      next(ErrorEnum.TokenChargeBadRequest)
     }
   };

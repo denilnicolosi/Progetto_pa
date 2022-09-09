@@ -9,9 +9,12 @@ const errorFactory: ErrorFactory = new ErrorFactory();
 const successFactory: SuccessFactory = new SuccessFactory();
 const jsChessEngine = require('js-chess-engine')
 
+function xor(a: any, b: any) {
+    return !!a !== !!b;
+}
+
 export async function newMatch(req:any, res:any){
-    var result:any = errorFactory.getError(ErrorEnum.DefaultError).getResponse()
-    result.data= {}
+    var result:any 
     var player = JSON.parse(JSON.stringify(Jwt.verify(req.headers.authorization, <string>process.env.SECRET_KEY))).email
     let challenger = req.body.vs
     //check if player has no match open
@@ -63,11 +66,57 @@ export async function newMatch(req:any, res:any){
         result = errorFactory.getError(ErrorEnum.CreateMatchNotAllowed).getResponse()
         result.data = {}
     }
-
-    console.log(result)
     return result
 }
 
+export async function move(req:any, res:any){
+    var result:any
+    
+    //get user email from jwt
+    const decoded:any = <string>Jwt.decode(req.headers.authorization)
+    var player = decoded.email
+
+    const [playerOpenMatch] = JSON.parse(await modelMatches.getOpenMatchByUser(player))
+    console.log(playerOpenMatch)
+    var boardConfiguration = JSON.parse(playerOpenMatch.dati)
+
+    if((player == playerOpenMatch.player1 && boardConfiguration.turn =="white") || (player == playerOpenMatch.player2 && boardConfiguration.turn =="black")){
+        //check turn. Player1 is always white and Player2 is alwais black
+        try{
+            boardConfiguration = jsChessEngine.move(boardConfiguration,req.body.moveFrom,req.body.moveTo)
+            //move allowed
+            var updateResult = await modelMatches.updateMatch(playerOpenMatch.matchid, JSON.stringify(boardConfiguration))
+            if(!updateResult){
+                //failed to update database
+                result = errorFactory.getError(ErrorEnum.MoveError).getResponse()
+                result.data = {}
+            } else {
+                //update successfully
+                result = successFactory.getSuccess(SuccessEnum.MoveSuccess).getResponse()
+                result.data = {"nextTurn" : boardConfiguration.turn}   
+                jsChessEngine.printToConsole()
+                if(playerOpenMatch.player2 == "AI"){
+                    var aiMove = jsChessEngine.aiMove(boardConfiguration, req.body.level)
+                    const from = Object.keys(aiMove)[0]
+                    const to = Object.values(aiMove)[0]
+                    boardConfiguration = jsChessEngine.move(boardConfiguration,from, to)
+                    var updateResult = await modelMatches.updateMatch(playerOpenMatch.matchid, JSON.stringify(boardConfiguration))
+                }
+            }
+        } catch(e:any){
+            //move not allowed, return error
+            result = errorFactory.getError(ErrorEnum.MoveNotAllowedError).getResponse()
+            result.data = {"message" : e.message}        
+        }
+        
+    } else {
+        //move not allowed, return error
+        result = errorFactory.getError(ErrorEnum.MoveNotAllowedError).getResponse()
+        result.data = {}        
+    }
+   
+    return result
+}
 
 /*
 game.printToConsole()

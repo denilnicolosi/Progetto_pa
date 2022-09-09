@@ -18,6 +18,15 @@ class CreateMatchError implements Message{
   }
 }
 
+class MoveError implements Message{
+  getResponse(): Response {
+      return {
+          status: HttpStatusCode.INTERNAL_SERVER_ERROR,
+          message: "Internal Error on move"
+      }
+  }
+}
+
 class MoveNotAllowedError implements Message{
   getResponse(): Response {
       return {
@@ -209,6 +218,36 @@ class CreateMatchNotAllowed implements Message{
   }
 }
 
+class RouteNotFound implements Message{
+  getResponse(): Response {
+    return {
+      status: HttpStatusCode.NOT_FOUND,
+      message: "Route not found"
+    }
+  }
+}
+
+class JwtNotValid implements Message{
+  getResponse(): Response {
+    return {
+      status: HttpStatusCode.UNAUTHORIZED,
+      message: "Unauthorized - JWT not valid"
+    }
+  }
+}
+
+class ForbiddenRole implements Message{
+  getResponse(): Response {
+    return {
+      status: HttpStatusCode.FORBIDDEN,
+      message: "Forbidden - The user does not have the required role"
+    }
+  }
+}
+
+
+
+
 
 
 export class ErrorFactory {
@@ -223,6 +262,9 @@ export class ErrorFactory {
           break;
         case ErrorEnum.CreateMatchError:
           errorClass = new CreateMatchError();
+          break;
+        case ErrorEnum.MoveError:
+          errorClass = new MoveError();
           break;
         case ErrorEnum.MoveNotAllowedError:
           errorClass = new MoveNotAllowedError();
@@ -281,6 +323,14 @@ export class ErrorFactory {
         case ErrorEnum.CreateMatchNotAllowed:
           errorClass = new CreateMatchNotAllowed();
           break;
+        case ErrorEnum.RouteNotFound:
+          errorClass = new RouteNotFound();
+          break;
+        case ErrorEnum.ForbiddenRole:
+          errorClass = new ForbiddenRole();
+          break;
+          
+        
               
         default:
           errorClass = new DefaultError();

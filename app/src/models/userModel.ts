@@ -14,6 +14,7 @@ export const User = sequelize.define('users', {
     email: { type: DataTypes.STRING,  primaryKey: true },
     password: { type: DataTypes.STRING },
     role: { type: DataTypes.STRING },
+    token: {type: DataTypes.REAL}
 },
 {
     modelName: 'users',
@@ -41,4 +42,16 @@ export async function getUser(userEmail:string) {
     });
 
      return JSON.stringify(users);
+}
+export async function chargeToken(userEmail:string, token: number) {
+    
+    
+    return await User.update({ token: token },{
+    where:{
+        email: userEmail
+    }
+    });
+
+
+    
 }

@@ -26,7 +26,7 @@ export enum ErrorEnum {
     //errori dal controller
     LoginError,
     CreateMatchError,
-    MoveNotAllowedError,
+    MoveError,
     PlayedMatchError,
     StatusMatchError,
     HistoryMovesError,
@@ -49,7 +49,11 @@ export enum ErrorEnum {
     TokenChargeBadRequest,
     EndMatchBadRequest,  
 
-    CreateMatchNotAllowed
+    CreateMatchNotAllowed,
+    MoveNotAllowedError,
+    JwtNotValid,
+    RouteNotFound,
+    ForbiddenRole
 }
 
 

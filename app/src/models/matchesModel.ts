@@ -64,24 +64,16 @@ export async function insertNewMatch(Player1:string, Player2:string, Dati:string
     return JSON.stringify(match) 
    }
 
-   export async function getOpenMatchByUser(userEmail:string) {
-    
-    const OpenMatch = await sequelize.query("SELECT * FROM matches m WHERE (m.player1 = '" + userEmail + "' AND m.stato = 'open') OR (m.player2 = '" + userEmail + "' AND m.stato = 'open')", { type: QueryTypes.SELECT });
-    /*
-    const OpenMatch = await Matches.findAll({
-        where:{
-            [Op.or] : {
-                [Op.and]:{
-                    player1:userEmail,
-                    stato:"open"
-                },
-                [Op.and]:{
-                    player2:userEmail,
-                    stato:"open"
-                }
-            }
-        }
-    });*/
+    export async function getOpenMatchByUser(userEmail:string) {
+        const OpenMatch = await sequelize.query("SELECT * FROM matches m WHERE (m.player1 = '" + userEmail + "' AND m.stato = 'open') OR (m.player2 = '" + userEmail + "' AND m.stato = 'open')", { type: QueryTypes.SELECT });
+        return JSON.stringify(OpenMatch);
+    }
 
-     return JSON.stringify(OpenMatch);
-}
+    export async function updateMatch(Matchid:string, Dati:string) {
+      
+        return await Matches.update(
+            { dati: Dati },
+            { where: { matchid: Matchid } }
+        )
+                
+    }

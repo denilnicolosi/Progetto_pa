@@ -29,6 +29,28 @@ export async function login(email:string, password:string, res:any){
     return result
 }
 
+export async function chargeToken(email:string, token:string, res:any){
+   
+    var result:any 
+    try{   
+        //controllo prima se esiste un utente con quella email        
+        const [user] = JSON.parse(await modelUser.getUser(email))
+        if(user !== undefined){
+            //se esiste aggiorno l'importo dei token
+            await modelUser.chargeToken(email, Number(token))               
+            result = successFactory.getSuccess(SuccessEnum.TokenChargeSuccess).getResponse()
+        }else{
+            //altrimenti restituisco un errore
+            result = errorFactory.getError(ErrorEnum.TokenChargeError).getResponse()
+        }
+
+    }catch(err : any){
+        result = errorFactory.getError(ErrorEnum.TokenChargeError).getResponse()        
+    }
+    return result    
+}
+
+
 export function user(req:any, res:any){
     console.log("user")
 }
