@@ -44,3 +44,14 @@ export const checkAILevel = function (req: any, res: any, next: any) {
     next(ErrorEnum.CreateMatchError)    
   }
 };
+
+export const checkDate = function (req:any, res:any, next:any){
+  const from = new Date(req.body.dateFrom)
+  const to = new Date(req.body.dateFrom)
+  console.log(typeof NaN)
+  if((isNaN(from.valueOf()) || isNaN(to.valueOf())) && !(from <= to)){
+    next(ErrorEnum.PlayedMatchBadRequest)
+  }else{
+    next()
+  }
+}
