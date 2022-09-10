@@ -51,7 +51,6 @@ app.post(
   "/move",
   [middlewareUser.checkJWT, middlewareMatch.checkAILevel],
   async function (req: any, res: any) {
-    
     var response = await controllerMatch.move(req, res)
     res.status(response.status).send(JSON.stringify({message: response.message, data: response.data}))
   }
@@ -60,7 +59,9 @@ app.post(
 app.get(
   "/playedmatch",
   [middlewareUser.checkJWT],
-  function (req: any, res: any) {
+  async function (req: any, res: any) {
+    var response = await controllerMatch.playedMatch(req, res)
+    res.status(response.status).send(JSON.stringify({message: response.message, data: response.data}))
 
   }
 );

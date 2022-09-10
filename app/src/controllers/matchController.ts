@@ -91,18 +91,17 @@ export async function move(req:any, res:any){
                 result = errorFactory.getError(ErrorEnum.MoveError).getResponse()
                 result.data = {}
             } else {
-                //update successfully
-                result = successFactory.getSuccess(SuccessEnum.MoveSuccess).getResponse()
-                result.data = {"nextTurn" : boardConfiguration.turn}   
-                jsChessEngine.printToConsole()
-                if(playerOpenMatch.player2 == "AI"){
+                if(playerOpenMatch.player2 === null){
                     var aiMove = jsChessEngine.aiMove(boardConfiguration, req.body.level)
                     const from = Object.keys(aiMove)[0]
                     const to = Object.values(aiMove)[0]
                     boardConfiguration = jsChessEngine.move(boardConfiguration,from, to)
                     var updateResult = await modelMatches.updateMatch(playerOpenMatch.matchid, JSON.stringify(boardConfiguration))
                 }
-            }
+                    //update successfully
+                    result = successFactory.getSuccess(SuccessEnum.MoveSuccess).getResponse()
+                    result.data = {"nextTurn" : boardConfiguration.turn}
+                }
         } catch(e:any){
             //move not allowed, return error
             result = errorFactory.getError(ErrorEnum.MoveNotAllowedError).getResponse()
@@ -115,6 +114,23 @@ export async function move(req:any, res:any){
         result.data = {}        
     }
    
+    return result
+}
+
+export async function playedMatch(req:any, res:any) {
+    var result:any
+    //get user email from jwt
+    const decoded:any = <string>Jwt.decode(req.headers.authorization)
+    var player = decoded.email
+    try{
+        const matches = JSON.parse(await modelMatches.getMatchesByUser(player))
+        result = successFactory.getSuccess(SuccessEnum.PlayedMatchSuccess).getResponse()
+        result.data = {"matches" : matches}
+
+    } catch(err){
+        result = errorFactory.getError(ErrorEnum.PlayedMatchBadRequest).getResponse()
+        result.data = {}
+    }
     return result
 }
 

@@ -77,3 +77,12 @@ export async function insertNewMatch(Player1:string, Player2:string, Dati:string
         )
                 
     }
+    export async function getMatchesByUser(userEmail:string) {
+        const match = await Matches.findAll({
+            where: {
+                player1: userEmail
+              }
+            
+        });
+        return JSON.stringify(match)
+    }
