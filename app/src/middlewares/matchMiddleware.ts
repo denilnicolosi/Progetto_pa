@@ -45,6 +45,16 @@ export const checkAILevel = function (req: any, res: any, next: any) {
   }
 };
 
+export const checkDate = function (req:any, res:any, next:any){
+  const from = new Date(req.body.dateFrom)
+  const to = new Date(req.body.dateFrom)
+  console.log(typeof NaN)
+  if((isNaN(from.valueOf()) || isNaN(to.valueOf())) && !(from <= to)){
+    next(ErrorEnum.PlayedMatchBadRequest)
+  }else{
+    next()
+  }
+}
 export const checkMoves = function (req: any, res: any, next:any){
   try{
     var pattern = new RegExp("([A-H|a-h][1-8])");

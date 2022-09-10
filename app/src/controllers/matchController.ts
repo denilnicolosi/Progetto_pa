@@ -206,7 +206,7 @@ export async function playedMatch(req:any, res:any) {
     const decoded:any = <string>Jwt.decode(req.headers.authorization)
     var player = decoded.email
     try{
-        const matches = JSON.parse(await modelMatches.getMatchesByUser(player))
+        const matches = JSON.parse(await modelMatches.getMatchesByUser(player, req.body.dateFrom, req.body.dateTo))
         result = successFactory.getSuccess(SuccessEnum.PlayedMatchSuccess).getResponse()
         result.data = {"matches" : matches}
 

@@ -1,6 +1,7 @@
 import {DbConnection} from "./DbConnection";
 import {DataTypes, Sequelize, Op, QueryTypes} from 'sequelize';
 import { User } from "./userModel";
+import { user } from "../controllers/userController";
 
 
 
@@ -23,6 +24,7 @@ export const Matches = sequelize.define('matches', {
         key: 'email',
     } },
     dati: { type: DataTypes.STRING },
+    data_:{ type: DataTypes.DATEONLY},
     timestamp: {type: DataTypes.STRING},
     stato: { type: DataTypes.STRING },
     winner: {type: DataTypes.STRING}
@@ -35,11 +37,11 @@ export const Matches = sequelize.define('matches', {
 
 export async function insertNewMatch(Player1:string, Player2:string, Dati:string) {
     const Timestamp = Date.now()
-    console.log(typeof Dati)
     if(Player2 === "AI"){
         await Matches.create({
             player1: Player1,
             dati: Dati,
+            data_:sequelize.fn('NOW'),
             timestamp: Timestamp,
             stato:"open",
           });
@@ -49,6 +51,7 @@ export async function insertNewMatch(Player1:string, Player2:string, Dati:string
             player1: Player1,
             player2: Player2,
             dati: Dati,
+            data_:sequelize.fn('NOW'),
             timestamp: Timestamp,
             stato : "open",
           });
@@ -85,12 +88,17 @@ export async function insertNewMatch(Player1:string, Player2:string, Dati:string
         )
                 
     }
-    export async function getMatchesByUser(userEmail:string) {
-        const match = await Matches.findAll({
-            where: {
-                player1: userEmail
-              }
-            
-        });
-        return JSON.stringify(match)
+    export async function getMatchesByUser(userEmail:string, userDateFrom:any, userDateTo:any) {
+        var matches = []
+        if(userDateFrom && userDateTo){
+            matches = await sequelize.query("SELECT * FROM matches m WHERE m.data_ BETWEEN '" + userDateFrom + "' AND '" + userDateTo + "'", { type: QueryTypes.SELECT });
+        } else {
+            matches = await Matches.findAll({
+                where: {
+                    player1: userEmail,
+                  }
+                
+            });    
+        }
+        return JSON.stringify(matches)
     }

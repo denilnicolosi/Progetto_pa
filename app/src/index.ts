@@ -58,7 +58,7 @@ app.post(
 
 app.get(
   "/playedmatch",
-  [middlewareUser.checkJWT, middlewareUser.checkRolePlayer],
+  [middlewareUser.checkJWT, middlewareUser.checkRolePlayer, middlewareMatch.checkDate],
   async function (req: any, res: any) {
     var response = await controllerMatch.playedMatch(req, res)
     res.status(response.status).send(JSON.stringify({message: response.message, data: response.data}))
