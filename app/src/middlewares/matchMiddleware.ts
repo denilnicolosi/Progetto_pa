@@ -44,3 +44,18 @@ export const checkAILevel = function (req: any, res: any, next: any) {
     next(ErrorEnum.CreateMatchError)    
   }
 };
+
+export const checkMoves = function (req: any, res: any, next:any){
+  try{
+    var pattern = new RegExp("([A-H|a-h][1-8])");
+
+    if(pattern.test(req.body.moveFrom) && pattern.test(req.body.moveTo)){
+      next()
+    } else {
+      next(ErrorEnum.MoveBadRequest)
+    }
+  }catch(err){
+    next(ErrorEnum.MoveBadRequest)
+  }
+
+};

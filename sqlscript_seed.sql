@@ -22,6 +22,18 @@ VALUES (
     'password2',
     'player',
     5.7
+  ),
+  (
+    'users2@users2.it',
+    'password2',
+    'player',
+    8
+  ),
+  (
+    'users3@users3.it',
+    'password2',
+    'player',
+    9.3
   );
 
 CREATE TABLE `matches` (  

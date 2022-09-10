@@ -79,6 +79,24 @@ const errorFactory: ErrorFactory = new ErrorFactory();
     } 
   }
 
+  export const checkRolePlayer = function (req: any, res: any, next: any) {
+    try {
+      if(req.headers.authorization){
+        const decoded:any = <string>Jwt.decode(req.headers.authorization)
+        console.log(decoded)
+        if(decoded.role === "player"){
+          next();
+        }else{
+          next(ErrorEnum.ForbiddenRole)
+        }
+        
+      }
+    }
+    catch (error:any){
+      next(ErrorEnum.DefaultError)
+    } 
+  }
+
   export const checkInputToken = function (req: any, res: any, next: any) {
     try {
       //checking if token input is valid
