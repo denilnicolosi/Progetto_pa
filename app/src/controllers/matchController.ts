@@ -10,67 +10,6 @@ const successFactory: SuccessFactory = new SuccessFactory();
 const jsChessEngine = require('js-chess-engine')
 
 export async function newMatch(req:any, res:any){
-    var result:any 
-
-    //get user email from jwt
-    const decoded:any = <string>Jwt.decode(req.headers.authorization)
-    var player = decoded.email
-
-    let challenger = req.body.vs
-    //check if player has no match open
-    const playerOpenMatch = JSON.parse(await modelMatches.getOpenMatchByUser(player))
-    if(playerOpenMatch.length == 0){
-        //player has no opened match, check if challenger is AI
-        if(challenger === "AI"){
-            //challenger is AI open a new game with it
-            console.log("Player plays vs AI")
-            console.log(player + " vs " + challenger)
-            //create new game
-            const game = new jsChessEngine.Game()
-            const stato = JSON.stringify(game.exportJson())
-            const matchid = JSON.parse(await modelMatches.insertNewMatch(player, "AI", stato)).matchid
-            console.log("Creata partita: " + matchid)
-            result = successFactory.getSuccess(SuccessEnum.CreateMatchSuccess).getResponse()
-            result.data = { "matchid" : matchid}
-        } else {
-            //challenger isn't AI, check on DB if challenger is one of the registred user
-            let [user] = JSON.parse(await modelUser.getUser(challenger))
-            if(!user || player == challenger){
-                //challenger is'nt one of the registred user so return error
-                console.log("Challenger not found or player are tring to play with himself")
-                result = errorFactory.getError(ErrorEnum.EmailNotValidAddress).getResponse()
-                result.data = {}
-            } else {
-                //challenger is one of the register user, check if him has opened match
-                const challengerOpenMatch = JSON.parse(await modelMatches.getOpenMatchByUser(challenger))
-                if(challengerOpenMatch.length == 0){
-                    //challenger hasnt opened match, let's create a new match
-                    console.log("Player and Challenger hasn't opened match")
-                    console.log(player + " vs " + challenger)
-                    const game = new jsChessEngine.Game()
-                    const stato = JSON.stringify(game.exportJson())
-                    const matchid = JSON.parse(await modelMatches.insertNewMatch(player, challenger, stato)).matchid
-                    console.log("Creata partita: " + matchid)
-                    result = successFactory.getSuccess(SuccessEnum.CreateMatchSuccess).getResponse()
-                    result.data = { "matchid" : matchid}    
-                } else {
-                    //challenger has opened match, let's return a error
-                    console.log("Challenger has opened match")
-                    result = errorFactory.getError(ErrorEnum.CreateMatchNotAllowed).getResponse()
-                    result.data = {}
-                }
-            }
-        }    
-    } else {
-        //player has opened match, return a error
-        console.log("Player has opened match")
-        result = errorFactory.getError(ErrorEnum.CreateMatchNotAllowed).getResponse()
-        result.data = {}
-    }
-    return result
-}
-
-export async function newMatch2(req:any, res:any){
     var result:any
     try{
         //get user email from jwt
@@ -79,20 +18,20 @@ export async function newMatch2(req:any, res:any){
         let challenger = req.body.vs
 
         //check if player has no match open
-        const playerOpenMatch = JSON.parse(await modelMatches.getOpenMatchByUser(player))
-        if(playerOpenMatch.length == 0){
+        const playerOpenMatch = await modelMatches.getOpenMatchByUser(player)
+        if(playerOpenMatch==null){
             //player has no opened match
             if(challenger !== "AI"){           
                 //challenger isn't AI, check on DB if challenger is one of the registred user
-                let [user] = JSON.parse(await modelUser.getUser(challenger))
-                if(!user || player == challenger){
+                let user = await modelUser.getUser(challenger)
+                if(user==null || player == challenger){
                     //challenger isn't one of the registred user so return error
                     console.log("Challenger not found or player are tring to play with himself")
                     result = errorFactory.getError(ErrorEnum.EmailNotValidAddress).getResponse()
                 } else {
                     //challenger is one of the register user, check if him has opened match
-                    const challengerOpenMatch = JSON.parse(await modelMatches.getOpenMatchByUser(challenger))
-                    if(challengerOpenMatch.length != 0){   
+                    const challengerOpenMatch = await modelMatches.getOpenMatchByUser(challenger)
+                    if(challengerOpenMatch != null){   
                         //challenger has opened match, let's return a error
                         console.log("Challenger has opened match")
                         result = errorFactory.getError(ErrorEnum.CreateMatchNotAllowed).getResponse()
@@ -108,20 +47,21 @@ export async function newMatch2(req:any, res:any){
         if(result===undefined){ //there is no error in the checks above
 
             //check if the user has token to open the match
-            const token=await modelUser.getToken(player) 
-            console.log(token)
-           // console.log(Number(token.users.dataValues.token))
-            if(token !== undefined && Number(token)>=0.40){
+            const token:any=await modelUser.getToken(player)
+           
+            // console.log(Number(token.users.dataValues.token))
+            if(token != null && Number(token.token)>=0.40){
+                
                 //decrese token for player1
-                await modelUser.setToken(player, (Number(token)-0.40)) 
+                await modelUser.setToken(player, (Number(token.token)-0.40)) 
 
                 console.log(player + " vs " + challenger)
                 const game = new jsChessEngine.Game()
                 const stato = JSON.stringify(game.exportJson())
-                const matchid = JSON.parse(await modelMatches.insertNewMatch(player, challenger, stato)).matchid
-                console.log("Creata partita: " + matchid)
+                const match:any = await modelMatches.insertNewMatch(player, challenger, stato)
+                console.log("Creata partita: " + match.matchid)
                 result = successFactory.getSuccess(SuccessEnum.CreateMatchSuccess).getResponse()
-                result.data = { "matchid" : matchid} 
+                result.data = { "matchid" : match.matchid} 
             }
             else
             {
@@ -148,7 +88,7 @@ export async function move(req:any, res:any){
         var player = decoded.email
 
         //get the open match for the player
-        const [playerOpenMatch] = JSON.parse(await modelMatches.getOpenMatchByUser(player))
+        const playerOpenMatch:any = await modelMatches.getOpenMatchByUser(player)
         console.log(playerOpenMatch)
         var boardConfiguration = JSON.parse(playerOpenMatch.dati)
 
@@ -219,9 +159,10 @@ export async function playedMatch(req:any, res:any) {
 
 export async function decreseTokenMove(player:string) {
     //decrese token for move
-    const token=await modelUser.getToken(player) 
-    await modelUser.setToken(player, (Number(token)-0.01))   
+    const token:any=await modelUser.getToken(player) 
+    await modelUser.setToken(player, (Number(token.token)-0.01))   
 }
+
 
 /*
 game.printToConsole()

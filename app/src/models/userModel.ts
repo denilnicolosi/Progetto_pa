@@ -21,26 +21,15 @@ export const User = sequelize.define('users', {
     //freezeTableName: true
 });
 
-export async function trovaTutto() {
 
- 
-    const users = await User.findAll({
-        
-    });
-    console.log(users.every(user => user instanceof User)); // true
-    console.log("All users:", JSON.stringify(users, null, 2));
- 
-
-}
 export async function getUser(userEmail:string) {
     
-    const users = await User.findAll({
+    return await User.findOne({
+        raw:true,
         where:{
             email: userEmail
         }
-    });
-
-     return JSON.stringify(users);
+    });    
 
 }
 
@@ -55,13 +44,12 @@ export async function setToken(userEmail:string, token: number) {
 
 export async function getToken(userEmail:string) {
   
-    const utente  =  await User.findOne({
+    return await User.findOne({
+        raw: true,
         attributes: ['token'],
         where:{
             email: userEmail
         }
-    });
-
-    return utente
+    });   
       
 }

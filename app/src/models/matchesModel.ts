@@ -1,9 +1,6 @@
 import {DbConnection} from "./DbConnection";
 import {DataTypes, Sequelize, Op, QueryTypes} from 'sequelize';
 import { User } from "./userModel";
-import { user } from "../controllers/userController";
-
-
 
 //Connection to database
 const sequelize: Sequelize = DbConnection.getConnection();
@@ -57,27 +54,26 @@ export async function insertNewMatch(Player1:string, Player2:string, Dati:string
           });
     }
 
-    const [match] = await Matches.findAll({
+    return await Matches.findOne({
+        raw: true,
         attributes: ['matchid'],
         where: {
             timestamp: Timestamp
-          }
-        
+          }        
     });
-    return JSON.stringify(match) 
+    
    }
 
     export async function getOpenMatchByUser(userEmail:string) {
-        const openMatch = await Matches.findAll({
+        return await Matches.findOne({
+            raw: true,
             where: {
                 [Op.or]: [
                     { player1: userEmail, stato: 'open' },
                     { player2: userEmail, stato: 'open' }
                 ]                
             }            
-        });
-                
-        return JSON.stringify(openMatch);
+        });      
     }
 
     export async function updateMatch(Matchid:string, Dati:string) {
@@ -88,6 +84,7 @@ export async function insertNewMatch(Player1:string, Player2:string, Dati:string
         )
                 
     }
+    
     export async function getMatchesByUser(userEmail:string, userDateFrom:any, userDateTo:any) {
         var matches = []
         if(userDateFrom && userDateTo){

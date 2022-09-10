@@ -12,9 +12,9 @@ export async function login(email:string, password:string, res:any){
     
     try{
 
-        let [user] = JSON.parse(await modelUser.getUser(email))
-        if(user.password == password){
-            console.log("COINCIDONO")
+        let user:any = await modelUser.getUser(email)
+        if(user!=null && user.password == password){
+            console.log("Login effettuato")
             let payload = {
                 email:user.email,
                 role:user.role
@@ -23,7 +23,7 @@ export async function login(email:string, password:string, res:any){
             result = successFactory.getSuccess(SuccessEnum.LoginSuccess).getResponse()
             result.data = {"authorization" : token}
         } else {
-            console.log("NON COINCIDONO")
+            console.log("Login fallito")
             result = errorFactory.getError(ErrorEnum.LoginError).getResponse()
             result.data = {}
         }
@@ -38,8 +38,8 @@ export async function chargeToken(email:string, token:string, res:any){
     var result:any 
     try{   
         //controllo prima se esiste un utente con quella email        
-        const [user] = JSON.parse(await modelUser.getUser(email))
-        if(user !== undefined){
+        const user:any = await modelUser.getUser(email)
+        if(user != null){
             //se esiste aggiorno l'importo dei token
             await modelUser.setToken(email, Number(token))               
             result = successFactory.getSuccess(SuccessEnum.TokenChargeSuccess).getResponse()
@@ -58,10 +58,9 @@ export async function getToken(req:any) {
     var result:any
     try{
         const decoded:any = <string>Jwt.decode(req.headers.authorization)
-        const token = await modelUser.getToken(decoded.email)
-        console.log(token)
-              
-        if(token !== undefined){            
+        const token = await modelUser.getToken(decoded.email)      
+                     
+        if(token != null){            
             result= successFactory.getSuccess(SuccessEnum.TokenGetSuccess).getResponse()
             result.data=token
         }else{
