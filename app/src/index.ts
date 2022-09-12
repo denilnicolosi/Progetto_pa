@@ -76,7 +76,7 @@ app.get(
 
 app.get(
   "/historymoves",
-  [middlewareUser.checkJWT, middlewareMatch.checkMatchId, middlewareUser.checkRolePlayer],
+  [middlewareUser.checkJWT,  middlewareUser.checkRolePlayer, middlewareMatch.checkMatchId, middlewareMatch.checkExportType],
   async function (req: any, res: any) {
     var response = await controllerMatch.historyMoves(req, res)
     res.setHeader('Content-Type', 'application/json').status(response.status).send(JSON.stringify({message: response.message, data: response.data}))
@@ -113,8 +113,10 @@ app.put(
 app.put(
   "/endmatch",
   [middlewareUser.checkJWT, middlewareUser.checkRolePlayer],
-  function (req: any, res: any) {
-
+  async function (req: any, res: any) {
+    var response = await controllerMatch.endMatch(req, res)
+    console.log(response)
+    res.setHeader('Content-Type', 'application/json').status(response.status).send(JSON.stringify({message: response.message, data: response.data}))
   }
 );
 

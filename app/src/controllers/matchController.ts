@@ -1,6 +1,7 @@
 import Jwt from 'jsonwebtoken'
 import * as modelUser from '../models/userModel'
 import * as modelMatches from '../models/matchesModel'
+import * as modelMoves from '../models/movesModel'
 import {ErrorFactory} from '../factory/ErrorMessage'
 import {SuccessFactory} from '../factory/SuccessMessage'
 import {ErrorEnum, Message, SuccessEnum} from '../factory/Message'
@@ -8,6 +9,9 @@ import {ErrorEnum, Message, SuccessEnum} from '../factory/Message'
 const errorFactory: ErrorFactory = new ErrorFactory();
 const successFactory: SuccessFactory = new SuccessFactory();
 const jsChessEngine = require('js-chess-engine')
+const { getFen } = jsChessEngine
+
+
 
 export async function newMatch(req:any, res:any){
     var result:any
@@ -57,8 +61,10 @@ export async function newMatch(req:any, res:any){
 
                 console.log(player + " vs " + challenger)
                 const game = new jsChessEngine.Game()
-                const stato = JSON.stringify(game.exportJson())
-                const match:any = await modelMatches.insertNewMatch(player, challenger, stato)
+                const boardConfiguration = JSON.stringify(game.exportJson())
+                const match:any = await modelMatches.insertNewMatch(player, challenger)
+                await modelMoves.insertMove(match.matchid, null, null, boardConfiguration)
+
                 console.log("Creata partita: " + match.matchid)
                 result = successFactory.getSuccess(SuccessEnum.CreateMatchSuccess).getResponse()
                 result.data = { "matchid" : match.matchid} 
@@ -89,26 +95,15 @@ export async function move(req:any, res:any){
 
         //get the open match for the player
         const playerOpenMatch:any = await modelMatches.getOpenMatchByUser(player)
-        console.log(playerOpenMatch)
-        var boardConfiguration = JSON.parse(playerOpenMatch.dati)
-
+        var boardConfiguration= await modelMoves.getLastBoardConfiguration(playerOpenMatch.matchid)
+              
         if((player == playerOpenMatch.player1 && boardConfiguration.turn =="white") || (player == playerOpenMatch.player2 && boardConfiguration.turn =="black")){
             //check turn. Player1 is always white and Player2 is always black
-        
-            //decrese token for move
-            decreseTokenMove(playerOpenMatch.player1)
-
-            //do the move
-            boardConfiguration = jsChessEngine.move(boardConfiguration,req.body.moveFrom,req.body.moveTo)
-            //move allowed
-            let history = await modelMatches.getHistory(playerOpenMatch.matchid)
-            let historyArray = []
-            if(history != ""){
-                historyArray = history.split(",")
-            }
-            historyArray.push(req.body.moveFrom + "->" + req.body.moveTo)
-            var updateResult = await modelMatches.updateMatch(playerOpenMatch.matchid, JSON.stringify(boardConfiguration), historyArray.toString())
-            if(!updateResult){
+            
+            //do the move for the player
+            var boardConfiguration:any = await doMove(playerOpenMatch.matchid, playerOpenMatch.player1, req.body.moveFrom, req.body.moveTo)
+                     
+            if(boardConfiguration === null){
                 //failed to update database
                 result = errorFactory.getError(ErrorEnum.MoveError).getResponse()
                 result.data = {}
@@ -116,25 +111,28 @@ export async function move(req:any, res:any){
                 //update database success
                 //if player2 is null, the game is vs AI
                 if(playerOpenMatch.player2 === null){
+                    
                     var aiMove = jsChessEngine.aiMove(boardConfiguration, req.body.level)
                     const aiMoveFrom = Object.keys(aiMove)[0]
                     const aiMoveTo = <string> Object.values(aiMove)[0]
-                    decreseTokenMove(playerOpenMatch.player1)
-                    boardConfiguration = jsChessEngine.move(boardConfiguration,aiMoveFrom, aiMoveTo)
-                    let history = await modelMatches.getHistory(playerOpenMatch.matchid)
-                    let historyArray = []
-                    if(history != ""){
-                        historyArray = history.split(",")
-                    }
-                            historyArray.push(aiMoveFrom + "->" + aiMoveTo)
-                            var updateResult = await modelMatches.updateMatch(playerOpenMatch.matchid, JSON.stringify(boardConfiguration), historyArray.toString())
-                    }
-                //update successfully
-                result = successFactory.getSuccess(SuccessEnum.MoveSuccess).getResponse()
-                result.data = {"nextTurn" : boardConfiguration.turn}
-            }
 
-            
+                    boardConfiguration = await doMove(playerOpenMatch.matchid, playerOpenMatch.player1, aiMoveFrom, aiMoveTo)
+                    if(boardConfiguration === null){
+                        //failed to update database
+                        result = errorFactory.getError(ErrorEnum.MoveError).getResponse()
+                        result.data = {}
+                    }else{
+                        //update successfully
+                        result = successFactory.getSuccess(SuccessEnum.MoveSuccess).getResponse()
+                        result.data = {"nextTurn" : boardConfiguration.turn}
+                    }
+
+                }else{
+                    //update successfully
+                    result = successFactory.getSuccess(SuccessEnum.MoveSuccess).getResponse()
+                    result.data = {"nextTurn" : boardConfiguration.turn}
+                }
+            }
         } else {
             //move not allowed, return error
             result = errorFactory.getError(ErrorEnum.MoveNotAllowedError).getResponse()
@@ -148,6 +146,29 @@ export async function move(req:any, res:any){
     }
    
     return result
+}
+
+export async function doMove(matchid:any ,playerDecreaseToken:string, moveFrom:string, moveTo:string){
+    //decrese token to player 1
+    decreseTokenMove(playerDecreaseToken)
+    //get lastBoard configuration to do move
+    var boardConfiguration = await modelMoves.getLastBoardConfiguration(matchid)    
+    //do the move
+    var boardConfiguration = jsChessEngine.move(boardConfiguration, moveFrom, moveTo)
+    //insert the move in history
+    var insertMovesResult = await modelMoves.insertMove(matchid, moveFrom, moveTo, JSON.stringify(boardConfiguration))
+    //print to console
+    printToConsole(boardConfiguration) 
+
+    if(insertMovesResult)
+        return boardConfiguration
+    else 
+        return null    
+}
+
+export function printToConsole(boardConfiguration:any){
+    const game = new jsChessEngine.Game(boardConfiguration)
+    game.printToConsole()
 }
 
 export async function playedMatch(req:any, res:any) {
@@ -172,9 +193,9 @@ export async function statusMatch(req:any, res:any){
     const matchId = req.body.matchId
     try{
         const match = JSON.parse(await modelMatches.getMatchesById(matchId))
-        match.dati = JSON.parse(match.dati)
+        const boardConfiguration = await modelMoves.getLastBoardConfiguration(matchId)
         result = successFactory.getSuccess(SuccessEnum.StatusMatchSuccess).getResponse()
-        result.data = match
+        result.data = boardConfiguration
     } catch(err){
         result = errorFactory.getError(ErrorEnum.StatusMatchError).getResponse()
         result.data = {}
@@ -191,11 +212,23 @@ export async function historyMoves(req:any, res:any) {
     var result:any
     const matchId = req.body.matchId
     try{
-        const history = await modelMatches.getHistory(matchId)
+        const history:any = await modelMoves.getHistoryFromMatch(matchId)
+        
+        var i = 0
+        for (let elem of history) {
+            elem.moveid = i
+            i = i + 1;
+            if (req.body.type == "FEN"){
+                
+                elem.boardConfiguration = getFen(JSON.parse(elem.boardConfiguration))
+            }
+        }  
+
         result = successFactory.getSuccess(SuccessEnum.HistoryMovesSuccess).getResponse()
-        result.data = {"history": history.split(",")}
+        result.data = {"history": history}
     } catch(err){
         result = errorFactory.getError(ErrorEnum.StatusMatchError).getResponse()
+        console.log(err)
         result.data = {}
     }
     return result
@@ -211,5 +244,52 @@ export async function playersRank(req:any, res:any) {
         result = errorFactory.getError(ErrorEnum.PlayerRankError).getResponse()
         result.data = {}
     }
+    return result
+}
+
+export async function endMatch(req:any, res:any) {
+    var result:any
+    try{
+        const decoded:any = <string>Jwt.decode(req.headers.authorization)
+        var player = decoded.email
+        const playerOpenMatch:any = await modelMatches.getOpenMatchByUser(player)
+
+        if(playerOpenMatch){
+            if(playerOpenMatch.player2 === null){
+                await modelMatches.setState(playerOpenMatch.matchid, "close")
+                result = successFactory.getSuccess(SuccessEnum.EndMatchSuccessClose).getResponse()
+            } else {
+                
+                //check state of match 
+                const status = await modelMatches.getState(playerOpenMatch.matchid)
+
+                if(status == "close_request_player1" && player == playerOpenMatch.player2 ||
+                  status == "close_request_player2" && player == playerOpenMatch.player1){
+                   
+                    await modelMatches.setState(playerOpenMatch.matchid,"close")
+                    result = successFactory.getSuccess(SuccessEnum.EndMatchSuccessClose).getResponse()
+                }else if(status== "open" && player == playerOpenMatch.player1)
+                {
+                    await modelMatches.setState(playerOpenMatch.matchid,"close_request_player1")
+                    result = successFactory.getSuccess(SuccessEnum.EndMatchSuccessCloseRequest1).getResponse()
+                } else if(status== "open" && player == playerOpenMatch.player2)
+                {
+                    await modelMatches.setState(playerOpenMatch.matchid,"close_request_player2")
+                    result = successFactory.getSuccess(SuccessEnum.EndMatchSuccessCloseRequest2).getResponse()
+                }else{
+                    result = errorFactory.getError(ErrorEnum.WaitEndMatch).getResponse()
+                }
+            }
+
+        } else {
+            result = errorFactory.getError(ErrorEnum.EndMatchBadRequest).getResponse()
+        }   
+
+    }catch(err){
+        result = errorFactory.getError(ErrorEnum.EndMatchError).getResponse()
+        console.log(err)
+        result.data = {}
+    }
+
     return result
 }

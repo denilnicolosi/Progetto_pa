@@ -82,10 +82,28 @@ class TokenChargeSuccess implements Message {
   }
 }
 
-class EndMatchSuccess implements Message {
+class EndMatchSuccessClose implements Message {
   getResponse(): Response {
     return {
       message: "End match success",
+      status: HttpStatusCode.OK,
+    };
+  }
+}
+
+class EndMatchSuccessCloseRequest1 implements Message {
+  getResponse(): Response {
+    return {
+      message: "Close request from player 1 success",
+      status: HttpStatusCode.OK,
+    };
+  }
+}
+
+class EndMatchSuccessCloseRequest2 implements Message {
+  getResponse(): Response {
+    return {
+      message: "Close request from player 2 success",
       status: HttpStatusCode.OK,
     };
   }
@@ -137,8 +155,14 @@ export class SuccessFactory {
       case SuccessEnum.TokenChargeSuccess:
         successClass = new TokenChargeSuccess();
         break; 
-      case SuccessEnum.EndMatchSuccess:
-        successClass = new EndMatchSuccess();
+      case SuccessEnum.EndMatchSuccessCloseRequest1:
+        successClass = new EndMatchSuccessCloseRequest1();
+        break;  
+      case SuccessEnum.EndMatchSuccessCloseRequest2:
+        successClass = new EndMatchSuccessCloseRequest2();
+        break;           
+      case SuccessEnum.EndMatchSuccessClose:
+        successClass = new EndMatchSuccessClose();
         break;            
       default:
         successClass = new DefaultSuccess();

@@ -254,6 +254,16 @@ class NotEnoughToken implements Message{
   }
 }
 
+class WaitEndMatch implements Message{
+  getResponse(): Response {
+    return {
+      status: HttpStatusCode.FORBIDDEN,
+      message: "Forbidden - Wait that the other player confirm yout close request"
+    }
+  }
+}
+
+
 
 
 
@@ -341,6 +351,10 @@ export class ErrorFactory {
         case ErrorEnum.NotEnoughToken:
           errorClass = new NotEnoughToken();
           break;
+        case ErrorEnum.WaitEndMatch:
+          errorClass = new WaitEndMatch();
+          break;
+          
           
         default:
           errorClass = new DefaultError();

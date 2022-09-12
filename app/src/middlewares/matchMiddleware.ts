@@ -78,3 +78,16 @@ export const checkMatchId = function (req:any, res:any, next:any){
     next(ErrorEnum.StatusMatchBadRequest)
   }
 }
+
+export const checkExportType = function(req:any, res:any, next:any){
+  try{
+    if(req.body.type=="FEN" || req.body.type=="JSON"){
+      next()
+    }else{
+      next(ErrorEnum.HistoryMovesBadRequest)
+    }
+  }catch(err){
+    next(ErrorEnum.HistoryMovesError)
+  }
+}
+

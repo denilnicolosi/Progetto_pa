@@ -18,7 +18,9 @@ export enum SuccessEnum {
     PlayersRankSuccess,
     TokenGetSuccess,
     TokenChargeSuccess,
-    EndMatchSuccess,
+    EndMatchSuccessClose,
+    EndMatchSuccessCloseRequest1,
+    EndMatchSuccessCloseRequest2,
     DefaultSuccess  
 }
 
@@ -54,7 +56,8 @@ export enum ErrorEnum {
     JwtNotValid,
     RouteNotFound,
     ForbiddenRole,
-    NotEnoughToken
+    NotEnoughToken,
+    WaitEndMatch
 }
 
 
