@@ -62,15 +62,15 @@ app.get(
   async function (req: any, res: any) {
     var response = await controllerMatch.playedMatch(req, res)
     res.status(response.status).send(JSON.stringify({message: response.message, data: response.data}))
-
   }
 );
 
 app.get(
   "/statusmatch",
-  [middlewareUser.checkJWT],
-  function (req: any, res: any) {
-
+  [middlewareUser.checkJWT, middlewareMatch.checkMatchId],
+  async function (req: any, res: any) {
+    var response = await controllerMatch.statusMatch(req, res)
+    res.status(response.status).send(JSON.stringify({message: response.message, data: response.data}))
   }
 );
 

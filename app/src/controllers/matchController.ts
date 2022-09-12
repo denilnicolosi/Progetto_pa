@@ -134,13 +134,16 @@ export async function playedMatch(req:any, res:any) {
     return result
 }
 
-/*
-game.printToConsole()
-game.move("A2","A3")
-game.printToConsole()
-game.move("A7","A6")
-game.printToConsole()
-console.log()
-console.log("--------- HISTORY ------------")
-console.log(game.getHistory())*/
-
+export async function statusMatch(req:any, res:any){
+    var result:any
+    const matchId = req.body.matchId
+    try{
+        const match = await modelMatches.getMatchesById(matchId)
+        result = successFactory.getSuccess(SuccessEnum.StatusMatchSuccess).getResponse()
+        result.data = match
+    } catch(err){
+        result = errorFactory.getError(ErrorEnum.StatusMatchError).getResponse()
+        result.data = {}
+    }
+    return result
+}

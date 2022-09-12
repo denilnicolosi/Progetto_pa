@@ -47,11 +47,20 @@ export const checkAILevel = function (req: any, res: any, next: any) {
 
 export const checkDate = function (req:any, res:any, next:any){
   const from = new Date(req.body.dateFrom)
-  const to = new Date(req.body.dateFrom)
-  console.log(typeof NaN)
-  if((isNaN(from.valueOf()) || isNaN(to.valueOf())) && !(from <= to)){
+  const to = new Date(req.body.dateTo)
+
+  if(!req.body.dateFrom || !req.body.dateFrom || !(from <= to)){
     next(ErrorEnum.PlayedMatchBadRequest)
   }else{
     next()
+  }
+}
+
+export const checkMatchId = function (req:any, res:any, next:any){
+  const matchId = req.body.matchId
+  if((typeof matchId) === "number" && matchId > 0){
+    next()
+  } else {
+    next(ErrorEnum.StatusMatchBadRequest)
   }
 }

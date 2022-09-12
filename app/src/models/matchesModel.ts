@@ -94,3 +94,13 @@ export async function insertNewMatch(Player1:string, Player2:string, Dati:string
         }
         return JSON.stringify(matches)
     }
+
+    export async function getMatchesById(userMatchId:number) {
+        const [match] = await Matches.findAll({
+            where: {
+                matchid: userMatchId
+              }
+            
+        });
+        return match  
+    }
