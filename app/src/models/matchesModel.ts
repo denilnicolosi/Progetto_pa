@@ -1,9 +1,6 @@
 import {DbConnection} from "./DbConnection";
 import {DataTypes, Sequelize, Op, QueryTypes} from 'sequelize';
 import { User } from "./userModel";
-import { user } from "../controllers/userController";
-
-
 
 //Connection to database
 const sequelize: Sequelize = DbConnection.getConnection();
@@ -60,14 +57,14 @@ export async function insertNewMatch(Player1:string, Player2:string, Dati:string
           });
     }
 
-    const [match] = await Matches.findAll({
+    return await Matches.findOne({
+        raw: true,
         attributes: ['matchid'],
         where: {
             timestamp: Timestamp
-          }
-        
+          }        
     });
-    return JSON.stringify(match) 
+    
    }
 
    export async function getHistory(matchId:number) {
@@ -81,8 +78,15 @@ export async function insertNewMatch(Player1:string, Player2:string, Dati:string
     }
 
     export async function getOpenMatchByUser(userEmail:string) {
-        const OpenMatch = await sequelize.query("SELECT * FROM matches m WHERE (m.player1 = '" + userEmail + "' AND m.stato = 'open') OR (m.player2 = '" + userEmail + "' AND m.stato = 'open')", { type: QueryTypes.SELECT });
-        return JSON.stringify(OpenMatch);
+        return await Matches.findOne({
+            raw: true,
+            where: {
+                [Op.or]: [
+                    { player1: userEmail, stato: 'open' },
+                    { player2: userEmail, stato: 'open' }
+                ]                
+            }            
+        });      
     }
 
     export async function updateMatch(Matchid:string, Dati:string, History:string) {
@@ -94,6 +98,7 @@ export async function insertNewMatch(Player1:string, Player2:string, Dati:string
         )
                 
     }
+    
     export async function getMatchesByUser(userEmail:string, userDateFrom:any, userDateTo:any) {
         var matches = []
         if(userDateFrom && userDateTo){

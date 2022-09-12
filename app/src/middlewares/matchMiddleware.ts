@@ -55,6 +55,20 @@ export const checkDate = function (req:any, res:any, next:any){
     next()
   }
 }
+export const checkMoves = function (req: any, res: any, next:any){
+  try{
+    var pattern = new RegExp("([A-H|a-h][1-8])");
+
+    if(pattern.test(req.body.moveFrom) && pattern.test(req.body.moveTo)){
+      next()
+    } else {
+      next(ErrorEnum.MoveBadRequest)
+    }
+  }catch(err){
+    next(ErrorEnum.MoveBadRequest)
+  }
+
+};
 
 export const checkMatchId = function (req:any, res:any, next:any){
   const matchId = req.body.matchId

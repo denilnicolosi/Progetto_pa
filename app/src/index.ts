@@ -39,7 +39,7 @@ app.post(
 
 app.post(
   "/newgame",
-  [middlewareUser.checkJWT, middlewareMatch.checkChallenger],
+  [middlewareUser.checkJWT,middlewareUser.checkRolePlayer, middlewareMatch.checkChallenger],
   async function (req: any, res: any) {
     var response = await controllerMatch.newMatch(req, res)
     res.setHeader('Content-Type', 'application/json').status(response.status).send(JSON.stringify({message: response.message, data: response.data}))
@@ -49,7 +49,7 @@ app.post(
 
 app.post(
   "/move",
-  [middlewareUser.checkJWT, middlewareMatch.checkAILevel],
+  [middlewareUser.checkJWT, middlewareUser.checkRolePlayer, middlewareMatch.checkAILevel, middlewareMatch.checkMoves],
   async function (req: any, res: any) {
     var response = await controllerMatch.move(req, res)
     res.setHeader('Content-Type', 'application/json').status(response.status).send(JSON.stringify({message: response.message, data: response.data}))
@@ -58,7 +58,7 @@ app.post(
 
 app.get(
   "/playedmatch",
-  [middlewareUser.checkJWT, middlewareMatch.checkDate],
+  [middlewareUser.checkJWT, middlewareUser.checkRolePlayer, middlewareMatch.checkDate],
   async function (req: any, res: any) {
     var response = await controllerMatch.playedMatch(req, res)
     res.setHeader('Content-Type', 'application/json').status(response.status).send(JSON.stringify({message: response.message, data: response.data}))
@@ -67,7 +67,7 @@ app.get(
 
 app.get(
   "/statusmatch",
-  [middlewareUser.checkJWT, middlewareMatch.checkMatchId],
+  [middlewareUser.checkJWT, middlewareUser.checkRolePlayer, middlewareMatch.checkMatchId],
   async function (req: any, res: any) {
     var response = await controllerMatch.statusMatch(req, res)
     res.setHeader('Content-Type', 'application/json').status(response.status).send(JSON.stringify({message: response.message, data: response.data}))
@@ -76,7 +76,7 @@ app.get(
 
 app.get(
   "/historymoves",
-  [middlewareUser.checkJWT, middlewareMatch.checkMatchId],
+  [middlewareUser.checkJWT, middlewareMatch.checkMatchId, middlewareUser.checkRolePlayer],
   async function (req: any, res: any) {
     var response = await controllerMatch.historyMoves(req, res)
     res.setHeader('Content-Type', 'application/json').status(response.status).send(JSON.stringify({message: response.message, data: response.data}))
@@ -94,9 +94,10 @@ app.get(
 
 app.get(
   "/token",
-  [],
-  function (req: any, res: any) {
-
+  [middlewareUser.checkJWT, middlewareUser.checkRolePlayer],
+  async function (req: any, res: any) {
+    var response = await controllerUser.getToken(req)
+    res.status(response.status).send(JSON.stringify({message: response.message, data: response.data}))
   }
 );
 
@@ -111,7 +112,7 @@ app.put(
 
 app.put(
   "/endmatch",
-  [middlewareUser.checkJWT],
+  [middlewareUser.checkJWT, middlewareUser.checkRolePlayer],
   function (req: any, res: any) {
 
   }

@@ -245,6 +245,15 @@ class ForbiddenRole implements Message{
   }
 }
 
+class NotEnoughToken implements Message{
+  getResponse(): Response {
+    return {
+      status: HttpStatusCode.UNAUTHORIZED,
+      message: "Unauthorized - The player does not have enough tokens"
+    }
+  }
+}
+
 
 
 
@@ -329,9 +338,10 @@ export class ErrorFactory {
         case ErrorEnum.ForbiddenRole:
           errorClass = new ForbiddenRole();
           break;
+        case ErrorEnum.NotEnoughToken:
+          errorClass = new NotEnoughToken();
+          break;
           
-        
-              
         default:
           errorClass = new DefaultError();
         }

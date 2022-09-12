@@ -53,7 +53,8 @@ export enum ErrorEnum {
     MoveNotAllowedError,
     JwtNotValid,
     RouteNotFound,
-    ForbiddenRole
+    ForbiddenRole,
+    NotEnoughToken
 }
 
 

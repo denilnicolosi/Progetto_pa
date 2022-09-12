@@ -10,75 +10,95 @@ const successFactory: SuccessFactory = new SuccessFactory();
 const jsChessEngine = require('js-chess-engine')
 
 export async function newMatch(req:any, res:any){
-    var result:any 
-    var player = JSON.parse(JSON.stringify(Jwt.verify(req.headers.authorization, <string>process.env.SECRET_KEY))).email
-    let challenger = req.body.vs
-    //check if player has no match open
-    const playerOpenMatch = JSON.parse(await modelMatches.getOpenMatchByUser(player))
-    if(playerOpenMatch.length == 0){
-        //player has no opened match, check if challenger is AI
-        if(challenger === "AI"){
-            //challenger is AI open a new game with it
-            console.log("Player plays vs AI")
-            console.log(player + " vs " + challenger)
-            const game = new jsChessEngine.Game()
-            const stato = JSON.stringify(game.exportJson())
-            const matchid = JSON.parse(await modelMatches.insertNewMatch(player, "AI", stato)).matchid
-            console.log("Creata partita: " + matchid)
-            result = successFactory.getSuccess(SuccessEnum.CreateMatchSuccess).getResponse()
-            result.data = { "matchid" : matchid}
-        } else {
-            //challenger isn't AI, check on DB if challenger is one of the registred user
-            let [user] = JSON.parse(await modelUser.getUser(challenger))
-            if(!user || player == challenger){
-                //challenger is'nt one of the registred user so return error
-                console.log("Challenger not found or player are tring to play with himself")
-                result = errorFactory.getError(ErrorEnum.EmailNotValidAddress).getResponse()
-                result.data = {}
-            } else {
-                //challenger is one of the register user, check if him has opened match
-                const challengerOpenMatch = JSON.parse(await modelMatches.getOpenMatchByUser(challenger))
-                if(challengerOpenMatch.length == 0){
-                    //challenger hasnt opened match, let's create a new match
-                    console.log("Player and Challenger has'nt opened match")
-                    console.log(player + " vs " + challenger)
-                    const game = new jsChessEngine.Game()
-                    const stato = JSON.stringify(game.exportJson())
-                    const matchid = JSON.parse(await modelMatches.insertNewMatch(player, challenger, stato)).matchid
-                    console.log("Creata partita: " + matchid)
-                    result = successFactory.getSuccess(SuccessEnum.CreateMatchSuccess).getResponse()
-                    result.data = { "matchid" : matchid}    
+    var result:any
+    try{
+        //get user email from jwt
+        const decoded:any = <string>Jwt.decode(req.headers.authorization)
+        var player = decoded.email
+        let challenger = req.body.vs
+
+        //check if player has no match open
+        const playerOpenMatch = await modelMatches.getOpenMatchByUser(player)
+        if(playerOpenMatch==null){
+            //player has no opened match
+            if(challenger !== "AI"){           
+                //challenger isn't AI, check on DB if challenger is one of the registred user
+                let user = await modelUser.getUser(challenger)
+                if(user==null || player == challenger){
+                    //challenger isn't one of the registred user so return error
+                    console.log("Challenger not found or player are tring to play with himself")
+                    result = errorFactory.getError(ErrorEnum.EmailNotValidAddress).getResponse()
                 } else {
-                    //challenger has opened match, let's return a error
-                    console.log("Challenger has opened match")
-                    result = errorFactory.getError(ErrorEnum.CreateMatchNotAllowed).getResponse()
-                    result.data = {}
+                    //challenger is one of the register user, check if him has opened match
+                    const challengerOpenMatch = await modelMatches.getOpenMatchByUser(challenger)
+                    if(challengerOpenMatch != null){   
+                        //challenger has opened match, let's return a error
+                        console.log("Challenger has opened match")
+                        result = errorFactory.getError(ErrorEnum.CreateMatchNotAllowed).getResponse()
+                    }
                 }
+            }       
+        } else {
+            //player has opened match, return a error
+            console.log("Player has opened match")
+            result = errorFactory.getError(ErrorEnum.CreateMatchNotAllowed).getResponse()
+        }
+
+        if(result===undefined){ //there is no error in the checks above
+
+            //check if the user has token to open the match
+            const token:any=await modelUser.getToken(player)
+           
+            // console.log(Number(token.users.dataValues.token))
+            if(token != null && Number(token.token)>=0.40){
+                
+                //decrese token for player1
+                await modelUser.setToken(player, (Number(token.token)-0.40)) 
+
+                console.log(player + " vs " + challenger)
+                const game = new jsChessEngine.Game()
+                const stato = JSON.stringify(game.exportJson())
+                const match:any = await modelMatches.insertNewMatch(player, challenger, stato)
+                console.log("Creata partita: " + match.matchid)
+                result = successFactory.getSuccess(SuccessEnum.CreateMatchSuccess).getResponse()
+                result.data = { "matchid" : match.matchid} 
             }
-        }    
-    } else {
-        //player has opened match, return a error
-        console.log("Player has opened match")
-        result = errorFactory.getError(ErrorEnum.CreateMatchNotAllowed).getResponse()
-        result.data = {}
+            else
+            {
+                console.log("The player does not have enough tokens")
+                result = errorFactory.getError(ErrorEnum.NotEnoughToken).getResponse()
+            }   
+        }
+
+    }catch(err){
+        console.log("Error opening match"+err)
+        result = errorFactory.getError(ErrorEnum.CreateMatchError).getResponse()
     }
+
     return result
 }
 
 export async function move(req:any, res:any){
     var result:any
-    
-    //get user email from jwt
-    const decoded:any = <string>Jwt.decode(req.headers.authorization)
-    var player = decoded.email
 
-    const [playerOpenMatch] = JSON.parse(await modelMatches.getOpenMatchByUser(player))
-    console.log(playerOpenMatch)
-    var boardConfiguration = JSON.parse(playerOpenMatch.dati)
+    try{
 
-    if((player == playerOpenMatch.player1 && boardConfiguration.turn =="white") || (player == playerOpenMatch.player2 && boardConfiguration.turn =="black")){
-        //check turn. Player1 is always white and Player2 is alwais black
-        try{
+        //get user email from jwt
+        const decoded:any = <string>Jwt.decode(req.headers.authorization)
+        var player = decoded.email
+
+        //get the open match for the player
+        const playerOpenMatch:any = await modelMatches.getOpenMatchByUser(player)
+        console.log(playerOpenMatch)
+        var boardConfiguration = JSON.parse(playerOpenMatch.dati)
+
+        if((player == playerOpenMatch.player1 && boardConfiguration.turn =="white") || (player == playerOpenMatch.player2 && boardConfiguration.turn =="black")){
+            //check turn. Player1 is always white and Player2 is always black
+        
+            //decrese token for move
+            decreseTokenMove(playerOpenMatch.player1)
+
+            //do the move
             boardConfiguration = jsChessEngine.move(boardConfiguration,req.body.moveFrom,req.body.moveTo)
             //move allowed
             let history = await modelMatches.getHistory(playerOpenMatch.matchid)
@@ -93,10 +113,13 @@ export async function move(req:any, res:any){
                 result = errorFactory.getError(ErrorEnum.MoveError).getResponse()
                 result.data = {}
             } else {
+                //update database success
+                //if player2 is null, the game is vs AI
                 if(playerOpenMatch.player2 === null){
                     var aiMove = jsChessEngine.aiMove(boardConfiguration, req.body.level)
                     const aiMoveFrom = Object.keys(aiMove)[0]
                     const aiMoveTo = <string> Object.values(aiMove)[0]
+                    decreseTokenMove(playerOpenMatch.player1)
                     boardConfiguration = jsChessEngine.move(boardConfiguration,aiMoveFrom, aiMoveTo)
                     let history = await modelMatches.getHistory(playerOpenMatch.matchid)
                     let historyArray = []
@@ -105,21 +128,23 @@ export async function move(req:any, res:any){
                     }
                             historyArray.push(aiMoveFrom + "->" + aiMoveTo)
                             var updateResult = await modelMatches.updateMatch(playerOpenMatch.matchid, JSON.stringify(boardConfiguration), historyArray.toString())
-                }
-                    //update successfully
-                    result = successFactory.getSuccess(SuccessEnum.MoveSuccess).getResponse()
-                    result.data = {"nextTurn" : boardConfiguration.turn}
-                }
-        } catch(e:any){
+                    }
+                //update successfully
+                result = successFactory.getSuccess(SuccessEnum.MoveSuccess).getResponse()
+                result.data = {"nextTurn" : boardConfiguration.turn}
+            }
+
+            
+        } else {
             //move not allowed, return error
             result = errorFactory.getError(ErrorEnum.MoveNotAllowedError).getResponse()
-            result.data = {"message" : e.message}        
+            result.data = {}        
         }
-        
-    } else {
+
+    } catch(e:any){
         //move not allowed, return error
         result = errorFactory.getError(ErrorEnum.MoveNotAllowedError).getResponse()
-        result.data = {}        
+        console.log(e.message)        
     }
    
     return result
@@ -155,6 +180,11 @@ export async function statusMatch(req:any, res:any){
         result.data = {}
     }
     return result
+}
+export async function decreseTokenMove(player:string) {
+    //decrese token for move
+    const token:any=await modelUser.getToken(player) 
+    await modelUser.setToken(player, (Number(token.token)-0.01))   
 }
 
 export async function historyMoves(req:any, res:any) {
