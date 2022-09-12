@@ -9,10 +9,6 @@ const errorFactory: ErrorFactory = new ErrorFactory();
 const successFactory: SuccessFactory = new SuccessFactory();
 const jsChessEngine = require('js-chess-engine')
 
-function xor(a: any, b: any) {
-    return !!a !== !!b;
-}
-
 export async function newMatch(req:any, res:any){
     var result:any 
     var player = JSON.parse(JSON.stringify(Jwt.verify(req.headers.authorization, <string>process.env.SECRET_KEY))).email
@@ -85,7 +81,13 @@ export async function move(req:any, res:any){
         try{
             boardConfiguration = jsChessEngine.move(boardConfiguration,req.body.moveFrom,req.body.moveTo)
             //move allowed
-            var updateResult = await modelMatches.updateMatch(playerOpenMatch.matchid, JSON.stringify(boardConfiguration))
+            let history = await modelMatches.getHistory(playerOpenMatch.matchid)
+            let historyArray = []
+            if(history != ""){
+                historyArray = history.split(",")
+            }
+            historyArray.push(req.body.moveFrom + "->" + req.body.moveTo)
+            var updateResult = await modelMatches.updateMatch(playerOpenMatch.matchid, JSON.stringify(boardConfiguration), historyArray.toString())
             if(!updateResult){
                 //failed to update database
                 result = errorFactory.getError(ErrorEnum.MoveError).getResponse()
@@ -93,10 +95,16 @@ export async function move(req:any, res:any){
             } else {
                 if(playerOpenMatch.player2 === null){
                     var aiMove = jsChessEngine.aiMove(boardConfiguration, req.body.level)
-                    const from = Object.keys(aiMove)[0]
-                    const to = Object.values(aiMove)[0]
-                    boardConfiguration = jsChessEngine.move(boardConfiguration,from, to)
-                    var updateResult = await modelMatches.updateMatch(playerOpenMatch.matchid, JSON.stringify(boardConfiguration))
+                    const aiMoveFrom = Object.keys(aiMove)[0]
+                    const aiMoveTo = <string> Object.values(aiMove)[0]
+                    boardConfiguration = jsChessEngine.move(boardConfiguration,aiMoveFrom, aiMoveTo)
+                    let history = await modelMatches.getHistory(playerOpenMatch.matchid)
+                    let historyArray = []
+                    if(history != ""){
+                        historyArray = history.split(",")
+                    }
+                            historyArray.push(aiMoveFrom + "->" + aiMoveTo)
+                            var updateResult = await modelMatches.updateMatch(playerOpenMatch.matchid, JSON.stringify(boardConfiguration), historyArray.toString())
                 }
                     //update successfully
                     result = successFactory.getSuccess(SuccessEnum.MoveSuccess).getResponse()
@@ -138,11 +146,39 @@ export async function statusMatch(req:any, res:any){
     var result:any
     const matchId = req.body.matchId
     try{
-        const match = await modelMatches.getMatchesById(matchId)
+        const match = JSON.parse(await modelMatches.getMatchesById(matchId))
+        match.dati = JSON.parse(match.dati)
         result = successFactory.getSuccess(SuccessEnum.StatusMatchSuccess).getResponse()
         result.data = match
     } catch(err){
         result = errorFactory.getError(ErrorEnum.StatusMatchError).getResponse()
+        result.data = {}
+    }
+    return result
+}
+
+export async function historyMoves(req:any, res:any) {
+    var result:any
+    const matchId = req.body.matchId
+    try{
+        const history = await modelMatches.getHistory(matchId)
+        result = successFactory.getSuccess(SuccessEnum.HistoryMovesSuccess).getResponse()
+        result.data = {"history": history.split(",")}
+    } catch(err){
+        result = errorFactory.getError(ErrorEnum.StatusMatchError).getResponse()
+        result.data = {}
+    }
+    return result
+}
+
+export async function playersRank(req:any, res:any) {
+    var result:any
+    try{
+        const stats = await modelMatches.getStats()
+        result = successFactory.getSuccess(SuccessEnum.PlayersRankSuccess).getResponse()
+        result.data = {"playersRank" : stats}
+    } catch(err){
+        result = errorFactory.getError(ErrorEnum.PlayerRankError).getResponse()
         result.data = {}
     }
     return result

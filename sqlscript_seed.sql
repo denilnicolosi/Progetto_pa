@@ -31,6 +31,7 @@ CREATE TABLE `matches` (
   `dati` text NOT NULL,  
   `data_` DATE NOT NULL,
   `timestamp` varchar(80) NOT NULL,
+  `history` TEXT,
   `stato` enum('open', 'close') NOT NULL,  
   `winner` varchar(80),  
   PRIMARY KEY (`matchid`),

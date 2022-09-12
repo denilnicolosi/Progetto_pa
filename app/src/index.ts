@@ -24,7 +24,7 @@ app.get('/', (req:any, res:any) => {
   const jsChessEngine = require('js-chess-engine')
   const game = new jsChessEngine.Game()
   console.log(game.exportJson())
-  res.send(game.exportJson())
+  res.setHeader('Content-Type', 'application/json').send(game.exportJson())
 })
 
 
@@ -33,7 +33,7 @@ app.post(
   [middlewareUser.checkInputEmail, middlewareUser.checkInputPassword],
   async function (req: any, res: any) {
     var response = await controllerUser.login(req.body.email, req.body.password, res)
-    res.status(response.status).send(JSON.stringify({message: response.message, data: response.data}))
+    res.setHeader('Content-Type', 'application/json').status(response.status).send(JSON.stringify({message: response.message, data: response.data}))
   }
 );
 
@@ -42,7 +42,7 @@ app.post(
   [middlewareUser.checkJWT, middlewareMatch.checkChallenger],
   async function (req: any, res: any) {
     var response = await controllerMatch.newMatch(req, res)
-    res.status(response.status).send(JSON.stringify({message: response.message, data: response.data}))
+    res.setHeader('Content-Type', 'application/json').status(response.status).send(JSON.stringify({message: response.message, data: response.data}))
   }
 );
 
@@ -52,7 +52,7 @@ app.post(
   [middlewareUser.checkJWT, middlewareMatch.checkAILevel],
   async function (req: any, res: any) {
     var response = await controllerMatch.move(req, res)
-    res.status(response.status).send(JSON.stringify({message: response.message, data: response.data}))
+    res.setHeader('Content-Type', 'application/json').status(response.status).send(JSON.stringify({message: response.message, data: response.data}))
   }
 );
 
@@ -61,7 +61,7 @@ app.get(
   [middlewareUser.checkJWT, middlewareMatch.checkDate],
   async function (req: any, res: any) {
     var response = await controllerMatch.playedMatch(req, res)
-    res.status(response.status).send(JSON.stringify({message: response.message, data: response.data}))
+    res.setHeader('Content-Type', 'application/json').status(response.status).send(JSON.stringify({message: response.message, data: response.data}))
   }
 );
 
@@ -70,23 +70,25 @@ app.get(
   [middlewareUser.checkJWT, middlewareMatch.checkMatchId],
   async function (req: any, res: any) {
     var response = await controllerMatch.statusMatch(req, res)
-    res.status(response.status).send(JSON.stringify({message: response.message, data: response.data}))
+    res.setHeader('Content-Type', 'application/json').status(response.status).send(JSON.stringify({message: response.message, data: response.data}))
   }
 );
 
 app.get(
   "/historymoves",
-  [middlewareUser.checkJWT],
-  function (req: any, res: any) {
-
+  [middlewareUser.checkJWT, middlewareMatch.checkMatchId],
+  async function (req: any, res: any) {
+    var response = await controllerMatch.historyMoves(req, res)
+    res.setHeader('Content-Type', 'application/json').status(response.status).send(JSON.stringify({message: response.message, data: response.data}))
   }
 );
 
 app.get(
   "/playersrank",
   [],
-  function (req: any, res: any) {
-
+  async function (req: any, res: any) {
+    var response = await controllerMatch.playersRank(req, res)
+    res.setHeader('Content-Type', 'application/json').status(response.status).send(JSON.stringify({message: response.message, data: response.data}))
   }
 );
 
@@ -103,7 +105,7 @@ app.put(
   [middlewareUser.checkJWT, middlewareUser.checkRoleAdmin, middlewareUser.checkInputEmail, middlewareUser.checkInputToken],
   async function (req: any, res: any) {
     var response = await controllerUser.chargeToken(req.body.email, req.body.token, res)
-    res.status(response.status).send(JSON.stringify({message: response.message, data: response.data}))
+    res.setHeader('Content-Type', 'application/json').status(response.status).send(JSON.stringify({message: response.message, data: response.data}))
   }
 );
 

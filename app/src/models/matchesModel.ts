@@ -25,6 +25,7 @@ export const Matches = sequelize.define('matches', {
     } },
     dati: { type: DataTypes.STRING },
     data_:{ type: DataTypes.DATEONLY},
+    history: { type: DataTypes.STRING},
     timestamp: {type: DataTypes.STRING},
     stato: { type: DataTypes.STRING },
     winner: {type: DataTypes.STRING}
@@ -42,6 +43,7 @@ export async function insertNewMatch(Player1:string, Player2:string, Dati:string
             player1: Player1,
             dati: Dati,
             data_:sequelize.fn('NOW'),
+            history: "",
             timestamp: Timestamp,
             stato:"open",
           });
@@ -52,6 +54,7 @@ export async function insertNewMatch(Player1:string, Player2:string, Dati:string
             player2: Player2,
             dati: Dati,
             data_:sequelize.fn('NOW'),
+            history: "",
             timestamp: Timestamp,
             stato : "open",
           });
@@ -67,15 +70,26 @@ export async function insertNewMatch(Player1:string, Player2:string, Dati:string
     return JSON.stringify(match) 
    }
 
+   export async function getHistory(matchId:number) {
+    const result = await Matches.findOne({
+        attributes: ['history'],
+        where: {
+            matchid: matchId
+        }
+    });
+    return JSON.parse(JSON.stringify(result)).history
+    }
+
     export async function getOpenMatchByUser(userEmail:string) {
         const OpenMatch = await sequelize.query("SELECT * FROM matches m WHERE (m.player1 = '" + userEmail + "' AND m.stato = 'open') OR (m.player2 = '" + userEmail + "' AND m.stato = 'open')", { type: QueryTypes.SELECT });
         return JSON.stringify(OpenMatch);
     }
 
-    export async function updateMatch(Matchid:string, Dati:string) {
+    export async function updateMatch(Matchid:string, Dati:string, History:string) {
       
         return await Matches.update(
-            { dati: Dati },
+            { dati: Dati,
+            history:History },
             { where: { matchid: Matchid } }
         )
                 
@@ -102,5 +116,10 @@ export async function insertNewMatch(Player1:string, Player2:string, Dati:string
               }
             
         });
-        return match  
+        return JSON.stringify(match)  
+    }
+
+    export async function getStats() {
+        var stats = await sequelize.query("SELECT m.winner, COUNT(m.winner) AS Vittorie  FROM matches m WHERE m.winner IS NOT NULL GROUP BY m.winner ", { type: QueryTypes.SELECT });
+        return JSON.parse(JSON.stringify(stats))
     }
