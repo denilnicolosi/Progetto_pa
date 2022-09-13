@@ -263,6 +263,15 @@ class WaitEndMatch implements Message{
   }
 }
 
+class NotYourTurn implements Message{
+  getResponse(): Response {
+    return {
+      status: HttpStatusCode.FORBIDDEN,
+      message: "Forbidden - Wait the move from other player"
+    }
+  }
+}
+
 
 
 
@@ -353,6 +362,9 @@ export class ErrorFactory {
           break;
         case ErrorEnum.WaitEndMatch:
           errorClass = new WaitEndMatch();
+          break;
+        case ErrorEnum.NotYourTurn:
+          errorClass = new NotYourTurn();
           break;
           
           

@@ -66,7 +66,7 @@ app.post(
 
 app.post(
   "/move",
-  [middlewareUser.checkJWT, middlewareUser.checkRolePlayer, middlewareMatch.checkAILevel, middlewareMatch.checkMoves],
+  [middlewareUser.checkJWT, middlewareUser.checkRolePlayer, middlewareMatch.checkMoves],
   async function (req: any, res: any) {
     var response = await controllerMatch.move(req, res)
     res.setHeader('Content-Type', 'application/json').status(response.status).send(JSON.stringify({message: response.message, data: response.data}))

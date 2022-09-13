@@ -104,10 +104,143 @@ Nel file ```sqlscript_seed.sql``` viene specificata la struttura del database da
 
 
 ## 💻 Utilizzo
+Tutte le rotte necessitano come corpo della richiesta un oggetto JSON con i parametri. Per ogni rotta in seguito è specificato il funzionamento e i parametri di cui ha bisogno.
+### /login 
+- Metodo: ```POST```
+- Autenticazione JWT: ```NO```
+- Ruolo utente: ```player/admin```
+- Parametri obbligatori:
+  - ```email``` : Email dell'utente 
+  - ```password``` : Password dell'utente
+- Parametri facoltativi: ```/```
+- Formato risposta: ```application/json```
+- Descrizione:
 
-Spiegare le varie rotte come utilizzarle
+Esempio:
 
-nella rotta newgame passi anche l'email del player 2
+<a><img src="images/esempi/login.png" height='600' align="center"/></a>
+
+### /newgame     
+- Metodo: ```POST```
+- Autenticazione JWT: ```SI```
+- Ruolo utente: ```player```
+- Parametri obbligatori: 
+  - ```vs``` : Email del giocatore 2 oppure la stringa ```"AI"``` per giocare contro l'intelligenza artificiale. Il livello di quest'ultima viene specificato mossa per mossa al momento dell'inoltro di una mossa dell'utente alla partita. Il livello viene utilizzato dall' AI per calcolare la risposta.
+- Parametri facoltativi: ```/```
+- Formato risposta: ```application/json```
+- Descrizione: Creazione di una nuova partita 
+
+Esempio:
+
+<a><img src="images/esempi/newgame.png" height='600' align="center"/></a>
+
+### /move 
+- Metodo: ```POST```
+- Autenticazione JWT: ```SI```
+- Ruolo utente: ```player```
+- Parametri obbligatori: 
+  - ```level``` : livello dell'AI per calcolare la sua mossa successiva(obbligatorio solo per partite contro AI)
+  - ```moveFrom``` : posizione di partenza sulla scacchiera
+  - ```moveTo``` : posizione di destinazione
+- Parametri facoltativi: ```/```
+- Formato risposta: ```application/json```
+- Descrizione: Esegue una mossa dalla casella di partenza a quella di destinazione. Se si sta giocando una partita contro AI allora va specificato anche il livello della mossa di risposta da parte del programma
+
+Esempio:
+
+<a><img src="images/esempi/newgame.png" height='600' align="center"/></a>
+
+
+
+### /playedmatch 
+- Metodo: ```GET```
+- Autenticazione JWT: ```SI```
+- Ruolo utente: ```player```
+- Parametri obbligatori: 
+  - ```dateFrom``` : data di partenza del filtro (AAA-MM-GG)
+  - ```dateTo``` : data di arrivo del filtro (AAA-MM-GG)
+- Parametri facoltativi: ```/```
+- Formato risposta: ```application/json```
+- Descrizione: Ritorna la lista di partite giocate dall'utente nell'intervallo temporale specificato dalle due date passate nel body.
+
+<a><img src="images/esempi/playedmatch.png" height='600' align="center"/></a>
+
+
+### /statusmatch 
+- Metodo: ```GET```
+- Autenticazione JWT: ```SI```
+- Ruolo utente: ```player```
+- Parametri obbligatori: 
+  - ```matchId``` : id della partita per la quale si vuole ottenere lo stato
+- Parametri facoltativi: ```/```
+- Formato risposta: ```application/json```
+- Descrizione: Ritorna lo stato della partita specificata come parametro
+
+<a><img src="images/esempi/statusmatch.png" height='600' align="center"/></a>
+
+### /historymoves
+- Metodo: ```GET```
+- Autenticazione JWT: ```SI```
+- Ruolo utente: ```player```
+- Parametri obbligatori: 
+  - ```matchId``` : id della partita per la quale si vuole ottenere lo storico delle mosse
+  - ```type``` : specifica il formato della board configuration associata ad ogni mossa, può assumere due diversi valori:
+    - ```JSON``` : ritorna la board configuration dopo ogni mossa in formato JSON
+    - ```FEN``` : ritorna la board configuration dopo ogni mossa in formato FEN
+- Parametri facoltativi: ```/```
+- Formato risposta: ```application/json```
+- Descrizione: Ritorna lo storico delle mosse della partita specificata come parametro, il formato della board configuration può essere specificato in fase di richiesta. NB ogni partita include una prima mossa di configurazione che ha i valori di from e to settati a null.
+
+<a><img src="images/esempi/historymoves.png" height='600' align="center"/></a>
+
+### /playersrank 
+- Metodo: ```GET```
+- Autenticazione JWT: ```NO```
+- Ruolo utente: ```guest```
+- Parametri obbligatori: 
+  - ```order``` : assume due valori possibili:
+    - ```asc``` : ordina la lista dei giocatori per numero di vittorie in formato ascendente
+    - ```desc```: ordina la lista dei giocatori per numero di vittorie in formato discendente
+- Parametri facoltativi: ```/```
+- Formato risposta: ```application/json```
+- Descrizione: Ritorna la classifica dei giocatori per numero di partite vinte secondo l'ordinamento specificato
+
+<a><img src="images/esempi/playersrank.png" height='600' align="center"/></a>
+
+### /token
+- Metodo: ```GET```
+- Autenticazione JWT: ```SI```
+- Ruolo utente: ```player```
+- Parametri obbligatori: ```/```
+- Parametri facoltativi: ```/```
+- Formato risposta: ```application/json```
+- Descrizione: Ritorna la quantità di token del giocatore che ne fa richiesta
+
+<a><img src="images/esempi/GET_token.png" height='600' align="center"/></a>
+
+### /token       
+- Metodo: ```PUT```
+- Autenticazione JWT: ```SI```
+- Ruolo utente: ```admin```
+- Parametri obbligatori: 
+  -```email``` : utente sul quale vanno accreditati i token
+  -```token``` : numero di token da assegnare all'utente
+- Parametri facoltativi: ```/```
+- Formato risposta: ```application/json```
+- Descrizione: Assegna un quantitativo di token ad un certo utente
+
+<a><img src="images/esempi/PUT_token.png" height='600' align="center"/></a>
+
+### /endmatch    
+- Metodo: ```PUT```
+- Autenticazione JWT: ```SI```
+- Ruolo utente: ```player```
+- Parametri obbligatori: ```/```
+- Parametri facoltativi: ```/```
+- Formato risposta: ```application/json```
+- Descrizione: Nel caso l'utente che esegue questa richiesta ha una partita aperta contro l'IA la partita viene chiusa. Nel caso in cui l'utente ha una partita aperta contro un altro utente ed è il primo ad eseguire questa richiesta la partita viene posta in uno stato di closed_request e se l'altro utente esegue a sua volta questa rotta la partita viene chiusa definitivamente. NB non è possibile passare dallo stato di closed_request ad open
+
+<a><img src="images/esempi/endmatch.png" height='600' align="center"/></a>
 
 ## 📑 Progettazione
 
@@ -131,6 +264,110 @@ nella rotta newgame passi anche l'email del player 2
 Tutte le richieste sono in json
 
 ### Diagrammi UML
+#### Casi d'uso
+
+<a><img src="images/uml/casi_uso.png" height='600' align="center"/></a>
+
+#### ```/login ```
+Nel caso di successo: 
+
+<a><img src="images/uml/sequence_diagram-_login.png" height='600' align="center"/></a>
+
+Nel caso di errore:
+
+<a><img src="images/uml/sequence_diagram-_login-2.png" height='600' align="center"/></a>
+     
+#### ```/newgame``` 
+Nel caso di successo: 
+
+<a><img src="images/uml/sequence_diagram-_newgame.png" height='600' align="center"/></a>
+
+Nel caso di errore:
+
+<a><img src="images/uml/sequence_diagram-_newgame-2.png" height='600' align="center"/></a>
+
+#### ```/move```      
+
+Nel caso di successo: 
+
+<a><img src="images/uml/sequence_diagram-_move.png" height='600' align="center"/></a>
+
+Nel caso di errore:
+
+<a><img src="images/uml/sequence_diagram-_move-2.png" height='600' align="center"/></a>
+
+#### ```/playedmatch```  
+
+Nel caso di successo: 
+
+<a><img src="images/uml/sequence_diagram-_playedmatch.png" height='600' align="center"/></a>
+
+Nel caso di errore:
+
+<a><img src="images/uml/sequence_diagram-_playedmatch-2.png" height='600' align="center"/></a>
+
+#### ```/statusmatch```  
+
+Nel caso di successo: 
+
+<a><img src="images/uml/sequence_diagram-_statusmatch.png" height='600' align="center"/></a>
+
+Nel caso di errore:
+
+<a><img src="images/uml/sequence_diagram-_statusmatch-2.png" height='600' align="center"/></a>
+
+#### ```/historymoves``` 
+Nel caso di successo: 
+
+<a><img src="images/uml/sequence_diagram-_historymoves.png" height='600' align="center"/></a>
+
+Nel caso di errore:
+
+<a><img src="images/uml/sequence_diagram-_historymoves-2.png" height='600' align="center"/></a>
+
+#### ```/playersrank```  
+Nel caso di successo: 
+
+<a><img src="images/uml/sequence_diagram-_playersrank.png" height='600' align="center"/></a>
+
+Nel caso di errore:
+
+<a><img src="images/uml/sequence_diagram-_playersrank-2.png" height='600' align="center"/></a>
+
+#### ```/token```        
+Nel caso di successo: 
+
+<a><img src="images/uml/sequence_diagram-_token get.png" height='600' align="center"/></a>
+
+Nel caso di errore:
+
+<a><img src="images/uml/sequence_diagram-_token get-2.png" height='600' align="center"/></a>
+
+#### ```/token```        
+Nel caso di successo: 
+
+<a><img src="images/uml/sequence_diagram-_token put.png" height='600' align="center"/></a>
+
+Nel caso di errore:
+
+<a><img src="images/uml/sequence_diagram-_token put-2.png" height='600' align="center"/></a>
+
+#### ```/endmatch```     
+Nel caso di successo: 
+
+<a><img src="images/uml/sequence_diagram-_endmatch.png" height='600' align="center"/></a>
+
+Nel caso di errore:
+
+<a><img src="images/uml/sequence_diagram-_endmatch-2.png" height='600' align="center"/></a>
+
+
+
+
+
+
+
+
 
 
 ### Pattern utilizzati

@@ -53,6 +53,7 @@ export enum ErrorEnum {
 
     CreateMatchNotAllowed,
     MoveNotAllowedError,
+    NotYourTurn,
     JwtNotValid,
     RouteNotFound,
     ForbiddenRole,

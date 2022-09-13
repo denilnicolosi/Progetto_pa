@@ -121,7 +121,7 @@ export async function getMatchesById(userMatchId:number) {
 }
 
 export async function getStats(inputOrder:string) {
-    var stats = await sequelize.query("SELECT m.winner, COUNT(m.winner) AS Vittorie  FROM matches m WHERE m.winner IS NOT NULL GROUP BY m.winner ORDER BY Vittorie " + inputOrder, { type: QueryTypes.SELECT });
+    var stats = await sequelize.query("SELECT m.winner, COUNT(m.winner) AS Vittorie  FROM matches m WHERE m.winner IS NOT NULL AND m.winner !='AI' AND m.winner != 'draw'  GROUP BY m.winner ORDER BY Vittorie " + inputOrder, { type: QueryTypes.SELECT });
     return JSON.parse(JSON.stringify(stats))
 }
 

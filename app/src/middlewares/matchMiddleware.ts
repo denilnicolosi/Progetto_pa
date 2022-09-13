@@ -30,20 +30,6 @@ const errorFactory: ErrorFactory = new ErrorFactory();
   }
 };
 
-export const checkAILevel = function (req: any, res: any, next: any) {
-  try {
-    console.log("mossa di livello " + req.body.level)
-    if(req.body.level >= 0 && req.body.level <=4){
-      console.log("OK")
-      next()
-    } else {
-      console.log("NO")
-      next(ErrorEnum.CreateMatchBadRequest)
-    }
-  } catch (error: any) {
-    next(ErrorEnum.CreateMatchError)    
-  }
-};
 
 export const checkDate = function (req:any, res:any, next:any){
   const from = new Date(req.body.dateFrom)

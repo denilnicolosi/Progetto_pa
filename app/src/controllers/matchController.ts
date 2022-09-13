@@ -96,50 +96,67 @@ export async function move(req:any, res:any){
         //get the open match for the player
         const playerOpenMatch:any = await modelMatches.getOpenMatchByUser(player)
         var boardConfiguration= await modelMoves.getLastBoardConfiguration(playerOpenMatch.matchid)
-              
-        if((player == playerOpenMatch.player1 && boardConfiguration.turn =="white") || (player == playerOpenMatch.player2 && boardConfiguration.turn =="black")){
-            //check turn. Player1 is always white and Player2 is always black
+        if(playerOpenMatch.player2 !== null || (req.body.level >= 0 && req.body.level <=4) ){
             
-            //do the move for the player
-            var boardConfiguration:any = await doMove(playerOpenMatch.matchid, playerOpenMatch.player1, req.body.moveFrom, req.body.moveTo)
-                     
-            if(boardConfiguration === null){
-                //failed to update database
-                result = errorFactory.getError(ErrorEnum.MoveError).getResponse()
-                result.data = {}
-            } else {
-                //update database success
-                //if player2 is null, the game is vs AI
-                if(playerOpenMatch.player2 === null){
-                    
-                    var aiMove = jsChessEngine.aiMove(boardConfiguration, req.body.level)
-                    const aiMoveFrom = Object.keys(aiMove)[0]
-                    const aiMoveTo = <string> Object.values(aiMove)[0]
-
-                    boardConfiguration = await doMove(playerOpenMatch.matchid, playerOpenMatch.player1, aiMoveFrom, aiMoveTo)
-
-                }                
-               
-                if(boardConfiguration !== null){
-                    //update successfully
-                    result = successFactory.getSuccess(SuccessEnum.MoveSuccess).getResponse()
+            if((player == playerOpenMatch.player1 && boardConfiguration.turn =="white") || (player == playerOpenMatch.player2 && boardConfiguration.turn =="black")){
+                //check turn. Player1 is always white and Player2 is always black
+                
+                //do the move for the player
+                var boardConfiguration:any = await doMove(playerOpenMatch.matchid, playerOpenMatch.player1, req.body.moveFrom, req.body.moveTo)
+                        
+                if(boardConfiguration !== null){                  
+                    //update database success
+                
                     const matchResult = await checkWinner(boardConfiguration, playerOpenMatch)
+                    
                     if(matchResult == null){
-                        result.data = {"nextTurn" : boardConfiguration.turn}
+                        //there is no winner
+                        //if player2 is null, the game is vs AI
+                        if(playerOpenMatch.player2 === null){                                            
+                            //move AI
+                            var aiMove = jsChessEngine.aiMove(boardConfiguration, req.body.level)
+                            const aiMoveFrom = Object.keys(aiMove)[0]
+                            const aiMoveTo = <string> Object.values(aiMove)[0]
+
+                            boardConfiguration = await doMove(playerOpenMatch.matchid, playerOpenMatch.player1, aiMoveFrom, aiMoveTo)
+                            
+                            if(boardConfiguration !== null ){
+                                //update successfully
+                                result = successFactory.getSuccess(SuccessEnum.MoveSuccess).getResponse()
+                                const matchResult = await checkWinner(boardConfiguration, playerOpenMatch)
+                                if(matchResult == null){
+                                    result.data = {"nextTurn" : boardConfiguration.turn}
+                                } else {
+                                    result.data = {"winner" : matchResult}
+                                }
+                            }else{
+                                //failed to update database
+                                result = errorFactory.getError(ErrorEnum.MoveError).getResponse()
+                                result.data = {}
+                            }
+                        }else{
+                            //next turn to other player
+                            result = successFactory.getSuccess(SuccessEnum.MoveSuccess).getResponse()
+                            result.data = {"nextTurn" : boardConfiguration.turn}
+                        }        
                     } else {
+                        //there is a winner!
+                        result = successFactory.getSuccess(SuccessEnum.MoveSuccess).getResponse()
                         result.data = {"winner" : matchResult}
                     }
                 }else{
-                    //failed to update database
-                    result = errorFactory.getError(ErrorEnum.MoveError).getResponse()
-                    result.data = {}
+                 //failed to update database
+                 result = errorFactory.getError(ErrorEnum.MoveError).getResponse()
+                 result.data = {}
                 }
-                
+            } else {
+                //Not your turn
+                result = errorFactory.getError(ErrorEnum.NotYourTurn).getResponse()
+                result.data = {}  
             }
-        } else {
-            //move not allowed, return error
-            result = errorFactory.getError(ErrorEnum.MoveNotAllowedError).getResponse()
-            result.data = {}        
+        }else{            
+            result = errorFactory.getError(ErrorEnum.MoveBadRequest).getResponse()
+            result.data = {}  
         }
 
     } catch(e:any){
@@ -158,9 +175,14 @@ export async function checkWinner(boardConfiguration:any, playerOpenMatch:any){
         if(boardConfiguration.checkMate){
             if(boardConfiguration.turn == "white"){
                 winner = "black"
-                await modelMatches.setWinner(playerOpenMatch.matchid, playerOpenMatch.player2)
-                //add 1 token to winner
-                increaseToken(playerOpenMatch.player2,1)
+                if(playerOpenMatch.player2 === null){
+                    //winner AI
+                    await modelMatches.setWinner(playerOpenMatch.matchid, "AI")
+                }else{
+                    await modelMatches.setWinner(playerOpenMatch.matchid, playerOpenMatch.player2)
+                    //add 1 token to winner
+                    increaseToken(playerOpenMatch.player2,1)
+                }
             } else {
                 winner = "white"
                 await modelMatches.setWinner(playerOpenMatch.matchid, playerOpenMatch.player1)
@@ -169,6 +191,7 @@ export async function checkWinner(boardConfiguration:any, playerOpenMatch:any){
             }
         } else {
             winner = "draw"
+            await modelMatches.setWinner(playerOpenMatch.matchid, "draw")
         }
     }
     return winner
