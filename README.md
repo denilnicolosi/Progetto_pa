@@ -92,7 +92,7 @@ services:
     env_file:
       - .env   
     ports:
-      - 80:3000
+      - 443:3000
     volumes:
       - ./app/src:/home/node/app/src/
 ```
@@ -102,6 +102,8 @@ Inoltre viene specificato il bind dello storage del container alla macchina host
 ### File sqlscript_seed
 Nel file ```sqlscript_seed.sql``` viene specificata la struttura del database da creare al primo avvio del container. Vengono anche precaricati dei dati per consentire un utilizzo di prova dell'applicazione, quindi in caso di configurazione possono essere modificati direttamente in questo file. 
 
+### File selfsigned.crt e selfsigned.key
+Nella repo sono presenti all'interno della cartella app/certs i file generati da noi relativi al certificato x509 e alla chiave privata per abilitare HTTPS. È importante sottolineare che, in uno scenario di utilizzo reale, la chiave privata va mantenuta segreta e non esposta pubblicamente come in questo caso dove è stato fatto unicamente ai fini di semplificare la fase di test da parte del docente.
 
 ## 💻 Utilizzo
 Tutte le rotte necessitano come corpo della richiesta un oggetto JSON con i parametri. Per ogni rotta in seguito è specificato il funzionamento e i parametri di cui ha bisogno.
@@ -375,7 +377,15 @@ Nel caso di errore:
 - singleton
 - mvc
 - middleware
-- factory per errori
+- Factory method: è uno dei design pattern fondamentali e rientra nella categoria dei pattern creazionali. Esso indirizza la creazione di oggetti in un unico metodo senza specificare l'esatta classe desiderata. Questo avviene grazie ad una interfaccia per creare un oggetto, ma lascia che le sottoclassi decidano quale oggetto istanziare.
+In questo progetto, questo pattern viene utilizzato per la gestione dei messaggi di errori e di successo, con i relativi codici di risposta http. In particolare, è stata realizzata l'interfaccia Message che viene implementata da tutti i messaggi, sia di errore che di successo. Sono state sviluppate poi due classi, ErrorFactory e SuccessFactory, che contengono rispettivamente i metodi getError() e getSuccess() che prendono in input la tipologia di messaggio e restituiscono in output un oggetto della classe di messaggio specificata, contenente cosi anche il codice http associato.
+<a><img src="images/uml/factory_method.png" height='400' align="center"/></a>
+
+## Funzionalità aggiuntive
+### HTTPS
+
+## 🔍 Test
+Per testare l'applicazione si può utilizzare la seguente [collection](collection.json) postman inclusa nella repository.
 
 ## ✍️ Autori
 #### [Manelli Manuel](mailto:s1102514@studenti.univpm.it) (Matricola 1102514) 
