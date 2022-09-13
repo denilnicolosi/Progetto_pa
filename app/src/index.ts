@@ -1,49 +1,29 @@
 import express from 'express';
-import { Jwt } from 'jsonwebtoken'
+import * as dotenv from 'dotenv';
 import * as controllerUser from './controllers/userController';
 import * as controllerMatch from './controllers/matchController';
 import * as middlewareUser from './middlewares/userMiddleware';
 import * as middlewareMatch from './middlewares/matchMiddleware';
 import * as middlewareError from './middlewares/errorMiddleware';
-import * as dotenv from 'dotenv';
-import { stringify } from 'querystring';
+import {readFileSync} from 'fs';
+
+//manage https
+var https = require('https');
+var certificate = readFileSync('/home/node/app/certs/selfsigned.crt', 'utf8');
+var privateKey  = readFileSync('/home/node/app/certs/selfsigned.key', 'utf8');
+var credentials = {key: privateKey, cert: certificate};
+
 
 const app = express()
 const port = 3000
 dotenv.config();
 app.use(express.json());
 
-const jsChessEngine = require('js-chess-engine')
+var httpsServer = https.createServer(credentials, app);
 
-app.listen(port, () => {
+httpsServer.listen(port, () => {
   console.log(`App listening on port ${port}`)
-})
-
-const whiteAiLevel = 0
-const blackAiLevel = 0
-const game = new jsChessEngine.Game()
-
-app.get('/', (req:any, res:any) => {
-    
-  play()
- 
-})
-
-function play () {
-  const status = game.exportJson()
-  if (status.isFinished) {
-      console.log(`${status.turn} is in ${status.checkMate ? 'checkmate' : 'draw'}`)
-      console.log(status)
-  } else {
-      console.time('Calculated in')
-      const move = game.aiMove(status.turn === 'black' ? blackAiLevel : whiteAiLevel)
-      console.log(`${status.turn.toUpperCase()} move ${JSON.stringify(move)}`)
-      console.timeEnd('Calculated in')
-      game.printToConsole()
-      play()
-  }
-}
-
+});
 
 app.post(
   "/login",
