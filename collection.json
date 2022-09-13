@@ -1,0 +1,927 @@
+{
+	"info": {
+		"_postman_id": "0fcd6c11-c469-486e-b0f5-0f5f2f0d6f38",
+		"name": "chess",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "7637735"
+	},
+	"item": [
+		{
+			"name": "(admin@admin.it) login",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "autorization",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQGFkbWluLml0Iiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNjYyOTkwMjY2fQ.lJlTrtMwZltvDdf8adYYmTj5MhkBVPdEY9dbHPwzQ0Y",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\":\"admin@admin.it\",\n    \"password\":\"password1\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost/login",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "(admin@admin.it) token",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "authorization",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQGFkbWluLml0Iiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNjYyOTkwMjY2fQ.lJlTrtMwZltvDdf8adYYmTj5MhkBVPdEY9dbHPwzQ0Y",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\":\"users1@users1.it\",\n    \"token\":3\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost/token",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "(users1@users1.it) login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\":\"users1@users1.it\",\n    \"password\":\"password2\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost/login",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "(users1@users1.it) newgame",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "authorization",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXJzMUB1c2VyczEuaXQiLCJyb2xlIjoicGxheWVyIiwiaWF0IjoxNjYyOTg0MzMwfQ.MjjN6AZKvk60FklY-949M0wzDNagExcLTLwHALzYDns",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"vs\" : \"AI\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost/newgame",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"newgame"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "(users1@users1.it) move",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "authorization",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXJzMUB1c2VyczEuaXQiLCJyb2xlIjoicGxheWVyIiwiaWF0IjoxNjYyOTg0MzMwfQ.MjjN6AZKvk60FklY-949M0wzDNagExcLTLwHALzYDns",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"level\" : 0,\n    \"moveFrom\" : \"C2\",\n    \"moveTo\" : \"C3\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost/move",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"move"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "(users1@users1.it) playedmatch",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "authorization",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXJzMUB1c2VyczEuaXQiLCJyb2xlIjoicGxheWVyIiwiaWF0IjoxNjYyOTg0MzMwfQ.MjjN6AZKvk60FklY-949M0wzDNagExcLTLwHALzYDns",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"dateFrom\" : \"2022-09-10\",     \n    \"dateTo\" : \"2022-09-12\"\n\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost/playedmatch",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"playedmatch"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "(users1@users1.it) statusmatch",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "authorization",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXJzMUB1c2VyczEuaXQiLCJyb2xlIjoicGxheWVyIiwiaWF0IjoxNjYyOTg0MzMwfQ.MjjN6AZKvk60FklY-949M0wzDNagExcLTLwHALzYDns",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"matchId\" : 2\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost/statusmatch",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"statusmatch"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "(users1@users1.it) historymoves",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "authorization",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXJzMUB1c2VyczEuaXQiLCJyb2xlIjoicGxheWVyIiwiaWF0IjoxNjYyOTg0MzMwfQ.MjjN6AZKvk60FklY-949M0wzDNagExcLTLwHALzYDns",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"matchId\" : 1,\n    \"type\": \"FEN\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost/historymoves",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"historymoves"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "(users1@users1.it) token",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "authorization",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXJzMUB1c2VyczEuaXQiLCJyb2xlIjoicGxheWVyIiwiaWF0IjoxNjYyOTg0MzMwfQ.MjjN6AZKvk60FklY-949M0wzDNagExcLTLwHALzYDns",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost/token",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "(users1@users1.it) endmatch",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "authorization",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXJzMUB1c2VyczEuaXQiLCJyb2xlIjoicGxheWVyIiwiaWF0IjoxNjYyOTg0MzMwfQ.MjjN6AZKvk60FklY-949M0wzDNagExcLTLwHALzYDns",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost/endmatch",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"endmatch"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "(users2@users2.it) login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\":\"users2@users2.it\",\n    \"password\":\"password2\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost/login",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "(users2@users2.it) newgame",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "authorization",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXJzMkB1c2VyczIuaXQiLCJyb2xlIjoicGxheWVyIiwiaWF0IjoxNjYyOTg0MTYyfQ.nd6XFRd3WXtAtYf-2vTqb6SvBzS4UyRNiQheHiArXkY",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"vs\" : \"users3@users3.it\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost/newgame",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"newgame"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "(users2@users2.it) move",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "authorization",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXJzMkB1c2VyczIuaXQiLCJyb2xlIjoicGxheWVyIiwiaWF0IjoxNjYyOTg0MTYyfQ.nd6XFRd3WXtAtYf-2vTqb6SvBzS4UyRNiQheHiArXkY",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"moveFrom\" : \"A7\",\n    \"moveTo\" : \"A6\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost/move",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"move"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "(users2@users2.it) playedmatch",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "authorization",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXJzMkB1c2VyczIuaXQiLCJyb2xlIjoicGxheWVyIiwiaWF0IjoxNjYyOTg0MTYyfQ.nd6XFRd3WXtAtYf-2vTqb6SvBzS4UyRNiQheHiArXkY",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"dateFrom\" : \"2022-09-12\",     \n    \"dateTo\" : \"2022-09-12\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost/playedmatch",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"playedmatch"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "(users2@users2.it) statusmatch",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "authorization",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXJzMkB1c2VyczIuaXQiLCJyb2xlIjoicGxheWVyIiwiaWF0IjoxNjYyOTg0MTYyfQ.nd6XFRd3WXtAtYf-2vTqb6SvBzS4UyRNiQheHiArXkY",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"matchId\" : 2\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost/statusmatch?",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"statusmatch"
+					],
+					"query": [
+						{
+							"key": "",
+							"value": null
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "(users2@users2.it) historymoves",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "authorization",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXJzMkB1c2VyczIuaXQiLCJyb2xlIjoicGxheWVyIiwiaWF0IjoxNjYyOTg0MTYyfQ.nd6XFRd3WXtAtYf-2vTqb6SvBzS4UyRNiQheHiArXkY",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"matchId\" : 2\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost/historymoves",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"historymoves"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "(users2@users2.it) token",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "authorization",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXJzMkB1c2VyczIuaXQiLCJyb2xlIjoicGxheWVyIiwiaWF0IjoxNjYyOTg0MTYyfQ.nd6XFRd3WXtAtYf-2vTqb6SvBzS4UyRNiQheHiArXkY",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost/token",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "(users2@users2.it) endmatch",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "authorization",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXJzMkB1c2VyczIuaXQiLCJyb2xlIjoicGxheWVyIiwiaWF0IjoxNjYyOTg0MTYyfQ.nd6XFRd3WXtAtYf-2vTqb6SvBzS4UyRNiQheHiArXkY",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost/endmatch",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"endmatch"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "(users3@users3it) login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\":\"users3@users3.it\",\n    \"password\":\"password2\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost/login",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "(users3@users3it) newgame",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "authorization",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXJzM0B1c2VyczMuaXQiLCJyb2xlIjoicGxheWVyIiwiaWF0IjoxNjYyOTg0MjE2fQ.FllyQDmKy0yBfnY0VHIDQ9mv8SJOySnJZBPzYwjy1yA",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"vs\" : \"users2@users2.it\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost/newgame",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"newgame"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "(users3@users3it) move",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "authorization",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXJzM0B1c2VyczMuaXQiLCJyb2xlIjoicGxheWVyIiwiaWF0IjoxNjYyOTg0MjE2fQ.FllyQDmKy0yBfnY0VHIDQ9mv8SJOySnJZBPzYwjy1yA",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"moveFrom\" : \"A7\",\n    \"moveTo\" : \"A6\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost/move",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"move"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "(users3@users3it) playedmatch",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "authorization",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXJzM0B1c2VyczMuaXQiLCJyb2xlIjoicGxheWVyIiwiaWF0IjoxNjYyOTg0MjE2fQ.FllyQDmKy0yBfnY0VHIDQ9mv8SJOySnJZBPzYwjy1yA",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"dateFrom\" : \"2022-09-12\",     \n    \"dateTo\" : \"2022-09-12\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost/playedmatch",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"playedmatch"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "(users3@users3it) statusmatch",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "authorization",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXJzM0B1c2VyczMuaXQiLCJyb2xlIjoicGxheWVyIiwiaWF0IjoxNjYyOTg0MjE2fQ.FllyQDmKy0yBfnY0VHIDQ9mv8SJOySnJZBPzYwjy1yA",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"matchId\" : 2\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost/statusmatch",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"statusmatch"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "(users3@users3it) historymoves",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "authorization",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXJzM0B1c2VyczMuaXQiLCJyb2xlIjoicGxheWVyIiwiaWF0IjoxNjYyOTg0MjE2fQ.FllyQDmKy0yBfnY0VHIDQ9mv8SJOySnJZBPzYwjy1yA",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"matchId\" : 2\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost/historymoves",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"historymoves"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "(users3@users3.it) token",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "authorization",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXJzM0B1c2VyczMuaXQiLCJyb2xlIjoicGxheWVyIiwiaWF0IjoxNjYyOTg0MjE2fQ.FllyQDmKy0yBfnY0VHIDQ9mv8SJOySnJZBPzYwjy1yA",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost/token",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "(users3@users3it) endmatch",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "authorization",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXJzM0B1c2VyczMuaXQiLCJyb2xlIjoicGxheWVyIiwiaWF0IjoxNjYyOTg0MjE2fQ.FllyQDmKy0yBfnY0VHIDQ9mv8SJOySnJZBPzYwjy1yA",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost/endmatch",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"endmatch"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "playersrank",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "",
+						"value": "",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"order\" : \"asc\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost/playersrank",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"playersrank"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
