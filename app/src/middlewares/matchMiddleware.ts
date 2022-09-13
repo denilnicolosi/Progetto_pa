@@ -91,3 +91,18 @@ export const checkExportType = function(req:any, res:any, next:any){
   }
 }
 
+export const checkOrder = function(req:any, res:any, next:any){
+  try{
+    if(req.body.order=="desc"){
+      req.body.order=="DESC"
+      next()
+    }else if (req.body.order=="asc"){
+      req.body.order=="ASC"
+      next()
+    }else{
+      next(ErrorEnum.PlayerRankBadRequest)
+    }
+  }catch(err){
+    next(ErrorEnum.PlayerRankError)
+  }
+}

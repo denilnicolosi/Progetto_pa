@@ -117,21 +117,24 @@ export async function move(req:any, res:any){
                     const aiMoveTo = <string> Object.values(aiMove)[0]
 
                     boardConfiguration = await doMove(playerOpenMatch.matchid, playerOpenMatch.player1, aiMoveFrom, aiMoveTo)
-                    if(boardConfiguration === null){
-                        //failed to update database
-                        result = errorFactory.getError(ErrorEnum.MoveError).getResponse()
-                        result.data = {}
-                    }else{
-                        //update successfully
-                        result = successFactory.getSuccess(SuccessEnum.MoveSuccess).getResponse()
-                        result.data = {"nextTurn" : boardConfiguration.turn}
-                    }
 
-                }else{
+                }                
+               
+                if(boardConfiguration !== null){
                     //update successfully
                     result = successFactory.getSuccess(SuccessEnum.MoveSuccess).getResponse()
-                    result.data = {"nextTurn" : boardConfiguration.turn}
+                    const matchResult = await checkWinner(boardConfiguration, playerOpenMatch)
+                    if(matchResult == null){
+                        result.data = {"nextTurn" : boardConfiguration.turn}
+                    } else {
+                        result.data = {"winner" : matchResult}
+                    }
+                }else{
+                    //failed to update database
+                    result = errorFactory.getError(ErrorEnum.MoveError).getResponse()
+                    result.data = {}
                 }
+                
             }
         } else {
             //move not allowed, return error
@@ -148,9 +151,33 @@ export async function move(req:any, res:any){
     return result
 }
 
+export async function checkWinner(boardConfiguration:any, playerOpenMatch:any){
+    var winner = null
+    if(boardConfiguration.isFinished){
+        await modelMatches.setState(playerOpenMatch.matchid, "close")
+        if(boardConfiguration.checkMate){
+            if(boardConfiguration.turn == "white"){
+                winner = "black"
+                await modelMatches.setWinner(playerOpenMatch.matchid, playerOpenMatch.player2)
+                //add 1 token to winner
+                increaseToken(playerOpenMatch.player2,1)
+            } else {
+                winner = "white"
+                await modelMatches.setWinner(playerOpenMatch.matchid, playerOpenMatch.player1)
+                //add 1 token to winner
+                increaseToken(playerOpenMatch.player1,1)
+            }
+        } else {
+            winner = "draw"
+        }
+    }
+    return winner
+}
+
+
 export async function doMove(matchid:any ,playerDecreaseToken:string, moveFrom:string, moveTo:string){
     //decrese token to player 1
-    decreseTokenMove(playerDecreaseToken)
+    decreseToken(playerDecreaseToken, 0.01)
     //get lastBoard configuration to do move
     var boardConfiguration = await modelMoves.getLastBoardConfiguration(matchid)    
     //do the move
@@ -178,6 +205,11 @@ export async function playedMatch(req:any, res:any) {
     var player = decoded.email
     try{
         const matches = JSON.parse(await modelMatches.getMatchesByUser(player, req.body.dateFrom, req.body.dateTo))
+        for(var elem of matches){
+            elem.movesCount = await modelMoves.getMovesCountByMatch(elem.matchid)
+            console.log(elem)
+        }
+        
         result = successFactory.getSuccess(SuccessEnum.PlayedMatchSuccess).getResponse()
         result.data = {"matches" : matches}
 
@@ -202,10 +234,16 @@ export async function statusMatch(req:any, res:any){
     }
     return result
 }
-export async function decreseTokenMove(player:string) {
+export async function decreseToken(player:string, decrese:number) {
     //decrese token for move
     const token:any=await modelUser.getToken(player) 
-    await modelUser.setToken(player, (Number(token.token)-0.01))   
+    await modelUser.setToken(player, (Number(token.token)-decrese))   
+}
+
+export async function increaseToken(player:string, increase:number) {
+    //decrese token for move
+    const token:any=await modelUser.getToken(player) 
+    await modelUser.setToken(player, (Number(token.token)+increase))   
 }
 
 export async function historyMoves(req:any, res:any) {
@@ -237,7 +275,7 @@ export async function historyMoves(req:any, res:any) {
 export async function playersRank(req:any, res:any) {
     var result:any
     try{
-        const stats = await modelMatches.getStats()
+        const stats = await modelMatches.getStats(req.body.order)
         result = successFactory.getSuccess(SuccessEnum.PlayersRankSuccess).getResponse()
         result.data = {"playersRank" : stats}
     } catch(err){
@@ -268,6 +306,10 @@ export async function endMatch(req:any, res:any) {
                    
                     await modelMatches.setState(playerOpenMatch.matchid,"close")
                     result = successFactory.getSuccess(SuccessEnum.EndMatchSuccessClose).getResponse()
+
+                    increaseToken(playerOpenMatch.player1,0.1)
+                    increaseToken(playerOpenMatch.player2,0.1)
+
                 }else if(status== "open" && player == playerOpenMatch.player1)
                 {
                     await modelMatches.setState(playerOpenMatch.matchid,"close_request_player1")

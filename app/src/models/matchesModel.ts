@@ -94,17 +94,19 @@ SELECT * WHERE (`matches`.`player1` = 'users1@users1.it' OR `matches`.`player2` 
 }
 
 export async function getMatchesByUser(userEmail:string, userDateFrom:any, userDateTo:any) {
-    var matches = []
-    if(userDateFrom && userDateTo){
-        matches = await sequelize.query("SELECT * FROM matches m WHERE m.start_date BETWEEN '" + userDateFrom + "' AND '" + userDateTo + "'", { type: QueryTypes.SELECT });
-    } else {
-        matches = await Matches.findAll({
-            where: {
-                player1: userEmail,
-                }
-            
-        });    
-    }
+    var matches = []    
+    matches = await Matches.findAll({
+        where:{
+            start_date: {
+                [Op.between]: [userDateFrom, userDateTo]
+            },
+            [Op.or]: [
+                { player1: userEmail},
+                { player2: userEmail}
+            ],
+        }
+    })
+      
     return JSON.stringify(matches)
 }
 
@@ -118,8 +120,8 @@ export async function getMatchesById(userMatchId:number) {
     return JSON.stringify(match)  
 }
 
-export async function getStats() {
-    var stats = await sequelize.query("SELECT m.winner, COUNT(m.winner) AS Vittorie  FROM matches m WHERE m.winner IS NOT NULL GROUP BY m.winner ", { type: QueryTypes.SELECT });
+export async function getStats(inputOrder:string) {
+    var stats = await sequelize.query("SELECT m.winner, COUNT(m.winner) AS Vittorie  FROM matches m WHERE m.winner IS NOT NULL GROUP BY m.winner ORDER BY Vittorie " + inputOrder, { type: QueryTypes.SELECT });
     return JSON.parse(JSON.stringify(stats))
 }
 
@@ -132,6 +134,7 @@ export async function setState(inputMatchId:number, inputStatus:string) {
     });    
 }
 
+
 export async function getState(inputMatchId:number) {
 
     const result:any= await Matches.findOne({
@@ -142,4 +145,14 @@ export async function getState(inputMatchId:number) {
         }
     });   
     return result.status;
+}
+
+
+export async function setWinner(inputMatchId:number, inputPlayer:string) {
+    
+    return await Matches.update({ winner: inputPlayer },{
+    where:{
+        matchid: inputMatchId
+    }
+    });    
 }

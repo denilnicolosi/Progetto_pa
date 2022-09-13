@@ -61,3 +61,8 @@ export async function getHistoryFromMatch(input_matchId:number) {
         ]          
     });      
 }
+
+export async function getMovesCountByMatch(input_matchId:number){
+    const [movesCount]:any = await sequelize.query("SELECT COUNT(*) - 1 AS conteggio  FROM moves m WHERE m.matchid = " + input_matchId + " GROUP BY m.matchid ", { type: QueryTypes.SELECT });
+    return movesCount.conteggio
+}

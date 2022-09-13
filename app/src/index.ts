@@ -13,19 +13,36 @@ const port = 3000
 dotenv.config();
 app.use(express.json());
 
+const jsChessEngine = require('js-chess-engine')
 
 app.listen(port, () => {
   console.log(`App listening on port ${port}`)
 })
 
-
+const whiteAiLevel = 0
+const blackAiLevel = 0
+const game = new jsChessEngine.Game()
 
 app.get('/', (req:any, res:any) => {
-  const jsChessEngine = require('js-chess-engine')
-  const game = new jsChessEngine.Game()
-  console.log(game.exportJson())
-  res.setHeader('Content-Type', 'application/json').send(game.exportJson())
+    
+  play()
+ 
 })
+
+function play () {
+  const status = game.exportJson()
+  if (status.isFinished) {
+      console.log(`${status.turn} is in ${status.checkMate ? 'checkmate' : 'draw'}`)
+      console.log(status)
+  } else {
+      console.time('Calculated in')
+      const move = game.aiMove(status.turn === 'black' ? blackAiLevel : whiteAiLevel)
+      console.log(`${status.turn.toUpperCase()} move ${JSON.stringify(move)}`)
+      console.timeEnd('Calculated in')
+      game.printToConsole()
+      play()
+  }
+}
 
 
 app.post(
@@ -85,7 +102,7 @@ app.get(
 
 app.get(
   "/playersrank",
-  [],
+  [middlewareMatch.checkOrder],
   async function (req: any, res: any) {
     var response = await controllerMatch.playersRank(req, res)
     res.setHeader('Content-Type', 'application/json').status(response.status).send(JSON.stringify({message: response.message, data: response.data}))
@@ -97,7 +114,7 @@ app.get(
   [middlewareUser.checkJWT, middlewareUser.checkRolePlayer],
   async function (req: any, res: any) {
     var response = await controllerUser.getToken(req)
-    res.status(response.status).send(JSON.stringify({message: response.message, data: response.data}))
+    res.setHeader('Content-Type', 'application/json').status(response.status).send(JSON.stringify({message: response.message, data: response.data}))
   }
 );
 
