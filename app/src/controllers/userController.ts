@@ -20,15 +20,15 @@ export async function login(email:string, password:string, res:any){
                 role:user.role
             };
             let token = await Jwt.sign(payload, <string>process.env.SECRET_KEY)
-            result = successFactory.getSuccess(SuccessEnum.LoginSuccess).getResponse()
+            result = successFactory.getMessage(SuccessEnum.LoginSuccess).getResponse()
             result.data = {"authorization" : token}
         } else {
             console.log("Login fallito")
-            result = errorFactory.getError(ErrorEnum.LoginError).getResponse()
+            result = errorFactory.getMessage(ErrorEnum.LoginError).getResponse()
             result.data = {}
         }
     }catch(err){
-        result = errorFactory.getError(ErrorEnum.LoginError).getResponse()
+        result = errorFactory.getMessage(ErrorEnum.LoginError).getResponse()
     }
     return result
 }
@@ -42,14 +42,14 @@ export async function chargeToken(email:string, token:string, res:any){
         if(user != null){
             //se esiste aggiorno l'importo dei token
             await modelUser.setToken(email, Number(token))               
-            result = successFactory.getSuccess(SuccessEnum.TokenChargeSuccess).getResponse()
+            result = successFactory.getMessage(SuccessEnum.TokenChargeSuccess).getResponse()
         }else{
             //altrimenti restituisco un errore
-            result = errorFactory.getError(ErrorEnum.TokenChargeError).getResponse()
+            result = errorFactory.getMessage(ErrorEnum.TokenChargeError).getResponse()
         }
 
     }catch(err : any){
-        result = errorFactory.getError(ErrorEnum.TokenChargeError).getResponse()        
+        result = errorFactory.getMessage(ErrorEnum.TokenChargeError).getResponse()        
     }
     return result    
 }
@@ -61,14 +61,14 @@ export async function getToken(req:any) {
         const token = await modelUser.getToken(decoded.email)      
                      
         if(token != null){            
-            result= successFactory.getSuccess(SuccessEnum.TokenGetSuccess).getResponse()
+            result= successFactory.getMessage(SuccessEnum.TokenGetSuccess).getResponse()
             result.data=token
         }else{
-            result = errorFactory.getError(ErrorEnum.TokenGetBadRequest).getResponse() 
+            result = errorFactory.getMessage(ErrorEnum.TokenGetBadRequest).getResponse() 
         }        
     }catch(err)
     {
-        result = errorFactory.getError(ErrorEnum.TokenGetError).getResponse() 
+        result = errorFactory.getMessage(ErrorEnum.TokenGetError).getResponse() 
     }
     return result
 }

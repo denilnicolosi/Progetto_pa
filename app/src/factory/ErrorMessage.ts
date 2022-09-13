@@ -1,4 +1,4 @@
-import {HttpStatusCode, Message, Response, ErrorEnum} from "./Message";
+import {MessageFactory,HttpStatusCode, Message, Response, ErrorEnum} from "./Message";
 
 class LoginError implements Message{
     getResponse(): Response {
@@ -278,10 +278,10 @@ class NotYourTurn implements Message{
 
 
 
-export class ErrorFactory {
-    constructor() {}
+export class ErrorFactory extends MessageFactory{
+    constructor() {super()}
 
-    getError(type: ErrorEnum): Message {
+    getMessage(type: ErrorEnum): Message {
 
       let errorClass: Message | null = null;
       switch (type) {

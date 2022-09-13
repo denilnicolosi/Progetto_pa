@@ -31,21 +31,21 @@ export async function newMatch(req:any, res:any){
                 if(user==null || player == challenger){
                     //challenger isn't one of the registred user so return error
                     console.log("Challenger not found or player are tring to play with himself")
-                    result = errorFactory.getError(ErrorEnum.EmailNotValidAddress).getResponse()
+                    result = errorFactory.getMessage(ErrorEnum.EmailNotValidAddress).getResponse()
                 } else {
                     //challenger is one of the register user, check if him has opened match
                     const challengerOpenMatch = await modelMatches.getOpenMatchByUser(challenger)
                     if(challengerOpenMatch != null){   
                         //challenger has opened match, let's return a error
                         console.log("Challenger has opened match")
-                        result = errorFactory.getError(ErrorEnum.CreateMatchNotAllowed).getResponse()
+                        result = errorFactory.getMessage(ErrorEnum.CreateMatchNotAllowed).getResponse()
                     }
                 }
             }       
         } else {
             //player has opened match, return a error
             console.log("Player has opened match")
-            result = errorFactory.getError(ErrorEnum.CreateMatchNotAllowed).getResponse()
+            result = errorFactory.getMessage(ErrorEnum.CreateMatchNotAllowed).getResponse()
         }
 
         if(result===undefined){ //there is no error in the checks above
@@ -66,19 +66,19 @@ export async function newMatch(req:any, res:any){
                 await modelMoves.insertMove(match.matchid, null, null, boardConfiguration)
 
                 console.log("Creata partita: " + match.matchid)
-                result = successFactory.getSuccess(SuccessEnum.CreateMatchSuccess).getResponse()
+                result = successFactory.getMessage(SuccessEnum.CreateMatchSuccess).getResponse()
                 result.data = { "matchid" : match.matchid} 
             }
             else
             {
                 console.log("The player does not have enough tokens")
-                result = errorFactory.getError(ErrorEnum.NotEnoughToken).getResponse()
+                result = errorFactory.getMessage(ErrorEnum.NotEnoughToken).getResponse()
             }   
         }
 
     }catch(err){
         console.log("Error opening match"+err)
-        result = errorFactory.getError(ErrorEnum.CreateMatchError).getResponse()
+        result = errorFactory.getMessage(ErrorEnum.CreateMatchError).getResponse()
     }
 
     return result
@@ -122,7 +122,7 @@ export async function move(req:any, res:any){
                             
                             if(boardConfiguration !== null ){
                                 //update successfully
-                                result = successFactory.getSuccess(SuccessEnum.MoveSuccess).getResponse()
+                                result = successFactory.getMessage(SuccessEnum.MoveSuccess).getResponse()
                                 const matchResult = await checkWinner(boardConfiguration, playerOpenMatch)
                                 if(matchResult == null){
                                     result.data = {"nextTurn" : boardConfiguration.turn}
@@ -131,37 +131,37 @@ export async function move(req:any, res:any){
                                 }
                             }else{
                                 //failed to update database
-                                result = errorFactory.getError(ErrorEnum.MoveError).getResponse()
+                                result = errorFactory.getMessage(ErrorEnum.MoveError).getResponse()
                                 result.data = {}
                             }
                         }else{
                             //next turn to other player
-                            result = successFactory.getSuccess(SuccessEnum.MoveSuccess).getResponse()
+                            result = successFactory.getMessage(SuccessEnum.MoveSuccess).getResponse()
                             result.data = {"nextTurn" : boardConfiguration.turn}
                         }        
                     } else {
                         //there is a winner!
-                        result = successFactory.getSuccess(SuccessEnum.MoveSuccess).getResponse()
+                        result = successFactory.getMessage(SuccessEnum.MoveSuccess).getResponse()
                         result.data = {"winner" : matchResult}
                     }
                 }else{
                  //failed to update database
-                 result = errorFactory.getError(ErrorEnum.MoveError).getResponse()
+                 result = errorFactory.getMessage(ErrorEnum.MoveError).getResponse()
                  result.data = {}
                 }
             } else {
                 //Not your turn
-                result = errorFactory.getError(ErrorEnum.NotYourTurn).getResponse()
+                result = errorFactory.getMessage(ErrorEnum.NotYourTurn).getResponse()
                 result.data = {}  
             }
         }else{            
-            result = errorFactory.getError(ErrorEnum.MoveBadRequest).getResponse()
+            result = errorFactory.getMessage(ErrorEnum.MoveBadRequest).getResponse()
             result.data = {}  
         }
 
     } catch(e:any){
         //move not allowed, return error
-        result = errorFactory.getError(ErrorEnum.MoveNotAllowedError).getResponse()
+        result = errorFactory.getMessage(ErrorEnum.MoveNotAllowedError).getResponse()
         console.log(e.message)        
     }
    
@@ -233,11 +233,11 @@ export async function playedMatch(req:any, res:any) {
             console.log(elem)
         }
         
-        result = successFactory.getSuccess(SuccessEnum.PlayedMatchSuccess).getResponse()
+        result = successFactory.getMessage(SuccessEnum.PlayedMatchSuccess).getResponse()
         result.data = {"matches" : matches}
 
     } catch(err){
-        result = errorFactory.getError(ErrorEnum.PlayedMatchBadRequest).getResponse()
+        result = errorFactory.getMessage(ErrorEnum.PlayedMatchBadRequest).getResponse()
         result.data = {}
     }
     return result
@@ -249,10 +249,10 @@ export async function statusMatch(req:any, res:any){
     try{
         const match = JSON.parse(await modelMatches.getMatchesById(matchId))
         const boardConfiguration = await modelMoves.getLastBoardConfiguration(matchId)
-        result = successFactory.getSuccess(SuccessEnum.StatusMatchSuccess).getResponse()
+        result = successFactory.getMessage(SuccessEnum.StatusMatchSuccess).getResponse()
         result.data = boardConfiguration
     } catch(err){
-        result = errorFactory.getError(ErrorEnum.StatusMatchError).getResponse()
+        result = errorFactory.getMessage(ErrorEnum.StatusMatchError).getResponse()
         result.data = {}
     }
     return result
@@ -285,10 +285,10 @@ export async function historyMoves(req:any, res:any) {
             }
         }  
 
-        result = successFactory.getSuccess(SuccessEnum.HistoryMovesSuccess).getResponse()
+        result = successFactory.getMessage(SuccessEnum.HistoryMovesSuccess).getResponse()
         result.data = {"history": history}
     } catch(err){
-        result = errorFactory.getError(ErrorEnum.StatusMatchError).getResponse()
+        result = errorFactory.getMessage(ErrorEnum.StatusMatchError).getResponse()
         console.log(err)
         result.data = {}
     }
@@ -299,10 +299,10 @@ export async function playersRank(req:any, res:any) {
     var result:any
     try{
         const stats = await modelMatches.getStats(req.body.order)
-        result = successFactory.getSuccess(SuccessEnum.PlayersRankSuccess).getResponse()
+        result = successFactory.getMessage(SuccessEnum.PlayersRankSuccess).getResponse()
         result.data = {"playersRank" : stats}
     } catch(err){
-        result = errorFactory.getError(ErrorEnum.PlayerRankError).getResponse()
+        result = errorFactory.getMessage(ErrorEnum.PlayerRankError).getResponse()
         result.data = {}
     }
     return result
@@ -318,7 +318,7 @@ export async function endMatch(req:any, res:any) {
         if(playerOpenMatch){
             if(playerOpenMatch.player2 === null){
                 await modelMatches.setState(playerOpenMatch.matchid, "close")
-                result = successFactory.getSuccess(SuccessEnum.EndMatchSuccessClose).getResponse()
+                result = successFactory.getMessage(SuccessEnum.EndMatchSuccessClose).getResponse()
             } else {
                 
                 //check state of match 
@@ -328,7 +328,7 @@ export async function endMatch(req:any, res:any) {
                   status == "close_request_player2" && player == playerOpenMatch.player1){
                    
                     await modelMatches.setState(playerOpenMatch.matchid,"close")
-                    result = successFactory.getSuccess(SuccessEnum.EndMatchSuccessClose).getResponse()
+                    result = successFactory.getMessage(SuccessEnum.EndMatchSuccessClose).getResponse()
 
                     increaseToken(playerOpenMatch.player1,0.1)
                     increaseToken(playerOpenMatch.player2,0.1)
@@ -336,22 +336,22 @@ export async function endMatch(req:any, res:any) {
                 }else if(status== "open" && player == playerOpenMatch.player1)
                 {
                     await modelMatches.setState(playerOpenMatch.matchid,"close_request_player1")
-                    result = successFactory.getSuccess(SuccessEnum.EndMatchSuccessCloseRequest1).getResponse()
+                    result = successFactory.getMessage(SuccessEnum.EndMatchSuccessCloseRequest1).getResponse()
                 } else if(status== "open" && player == playerOpenMatch.player2)
                 {
                     await modelMatches.setState(playerOpenMatch.matchid,"close_request_player2")
-                    result = successFactory.getSuccess(SuccessEnum.EndMatchSuccessCloseRequest2).getResponse()
+                    result = successFactory.getMessage(SuccessEnum.EndMatchSuccessCloseRequest2).getResponse()
                 }else{
-                    result = errorFactory.getError(ErrorEnum.WaitEndMatch).getResponse()
+                    result = errorFactory.getMessage(ErrorEnum.WaitEndMatch).getResponse()
                 }
             }
 
         } else {
-            result = errorFactory.getError(ErrorEnum.EndMatchBadRequest).getResponse()
+            result = errorFactory.getMessage(ErrorEnum.EndMatchBadRequest).getResponse()
         }   
 
     }catch(err){
-        result = errorFactory.getError(ErrorEnum.EndMatchError).getResponse()
+        result = errorFactory.getMessage(ErrorEnum.EndMatchError).getResponse()
         console.log(err)
         result.data = {}
     }

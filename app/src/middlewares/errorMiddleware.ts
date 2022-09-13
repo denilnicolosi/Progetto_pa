@@ -8,7 +8,7 @@ export function errorRouteNotFound(req: any, res: any, next: any) {
 }
 
 export function errorHandler(err: ErrorEnum, req: any, res: any, next: any) {
-    var response = errorFactory.getError(err).getResponse()
+    var response = errorFactory.getMessage(err).getResponse()
     console.log("ERROR HANDLER:"+ response.message)
     res.status(response.status).send(JSON.stringify({"response" : response.message, "data" : {}}))
 }

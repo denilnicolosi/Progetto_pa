@@ -125,3 +125,10 @@ export enum HttpStatusCode {
     NOT_EXTENDED = 510,
     NETWORK_AUTHENTICATION_REQUIRED = 511
 }
+
+export abstract class MessageFactory {
+    
+    constructor() {}
+  
+    abstract getMessage(type: number): Message 
+}

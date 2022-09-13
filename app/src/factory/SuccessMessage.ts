@@ -1,4 +1,4 @@
-import {HttpStatusCode, Message, Response, SuccessEnum} from "./Message";
+import {MessageFactory, HttpStatusCode, Message, Response, SuccessEnum} from "./Message";
 
 
 class LoginSuccess implements Message {
@@ -119,11 +119,11 @@ class DefaultSuccess implements Message {
 }
 
 //classe del success factory, crea i messaggi di successo
-export class SuccessFactory {
+export class SuccessFactory extends MessageFactory{
     
-  constructor() {}
+  constructor() {super()}
 
-  getSuccess(type: SuccessEnum): Message {
+  getMessage(type: SuccessEnum): Message {
     
     let successClass: Message | null = null;
 
