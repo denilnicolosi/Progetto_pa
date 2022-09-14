@@ -386,6 +386,10 @@ In questo progetto, questo pattern viene utilizzato per la gestione dei messaggi
 
 ## 🔍 Test
 Per testare l'applicazione si può utilizzare la seguente [collection](collection.json) postman inclusa nella repository.
+Dato che viene utilizzato l'https, postman restituirà l'errore "SSL Error: Self signed certificate" questo è dovuto al fatto che il certificato è autogenerato. 
+Per testare comunque l'applicazione, cliccare su "Disable SSL Verification".
+
+<a><img src="images/esempi/disable_SSL_verification.png" height='300' align="center"/></a>
 
 ## ✍️ Autori
 #### [Manelli Manuel](mailto:s1102514@studenti.univpm.it) (Matricola 1102514) 
