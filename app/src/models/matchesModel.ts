@@ -1,6 +1,7 @@
 import {DbConnection} from "./DbConnection";
-import {DataTypes, Sequelize, Op, QueryTypes} from 'sequelize';
+import {DataTypes, Sequelize, Op, QueryTypes, where} from 'sequelize';
 import { User } from "./userModel";
+import { group } from "console";
 
 //Connection to database
 const sequelize: Sequelize = DbConnection.getConnection();
@@ -73,23 +74,8 @@ export async function getOpenMatchByUser(userEmail:string) {
                 ],
                 status: {
                 [Op.ne]: "close"
-                }
-            
-        }
-        
-        /*
-
-SELECT * WHERE (`matches`.`player1` = 'users1@users1.it' OR `matches`.`player2` = 'users1@users1.it') AND `matches`.`status` != 'close' LIMIT 1;
-
-        SELECT * FROM matches m WHERE ((m.player1 = userEmail || m.player2 = userEmail) AND m.status != 'close')
-        
-        where: {
-            [Op.or]: [
-                { player1: userEmail, status: 'open' },
-                { player2: userEmail, status: 'open' }
-            ]                
-        } 
-        */           
+                }            
+        }      
     });      
 }
 
@@ -121,8 +107,29 @@ export async function getMatchesById(userMatchId:number) {
 }
 
 export async function getStats(inputOrder:string) {
-    var stats = await sequelize.query("SELECT m.winner, COUNT(m.winner) AS Vittorie  FROM matches m WHERE m.winner IS NOT NULL AND m.winner !='AI' AND m.winner != 'draw'  GROUP BY m.winner ORDER BY Vittorie " + inputOrder, { type: QueryTypes.SELECT });
-    return JSON.parse(JSON.stringify(stats))
+   
+    const stats = await Matches.findAll({
+        raw: true,
+        attributes: [
+            'winner',
+            [Sequelize.fn('COUNT', Sequelize.col('winner')), 'Vittorie']
+        ],        
+        where: {                
+                [Op.not]:[{winner: null}],
+                winner:{
+                    [Op.and]:[
+                        {[Op.ne]:'draw'},
+                        {[Op.ne]:'AI'},
+                    ]
+                },
+        },
+        group: 'winner' ,
+        order:[
+            ['Vittorie', inputOrder],
+        ]
+    }) 
+   
+    return stats
 }
 
 export async function setState(inputMatchId:number, inputStatus:string) {
