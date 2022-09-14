@@ -87,7 +87,8 @@
 					}
 				},
 				"url": {
-					"raw": "localhost/login",
+					"raw": "https://localhost/login",
+					"protocol": "https",
 					"host": [
 						"localhost"
 					],
@@ -180,7 +181,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"dateFrom\" : \"2022-09-10\",     \n    \"dateTo\" : \"2022-09-12\"\n\n}",
+					"raw": "{\n    \"dateFrom\" : \"2022-09-14\",     \n    \"dateTo\" : \"2022-09-20\"\n\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -216,7 +217,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"matchId\" : 2\n}",
+					"raw": "{\n    \"matchId\" : 1\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -252,7 +253,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"matchId\" : 1,\n    \"type\": \"FEN\"\n}",
+					"raw": "{\n    \"matchId\" : 1,\n    \"type\": \"JSON\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -414,7 +415,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"moveFrom\" : \"A7\",\n    \"moveTo\" : \"A6\"\n}",
+					"raw": "{\n    \"moveFrom\" : \"A2\",\n    \"moveTo\" : \"A3\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -450,7 +451,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"dateFrom\" : \"2022-09-12\",     \n    \"dateTo\" : \"2022-09-12\"\n}",
+					"raw": "{\n    \"dateFrom\" : \"2022-09-14\",     \n    \"dateTo\" : \"2022-09-20\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -494,19 +495,13 @@
 					}
 				},
 				"url": {
-					"raw": "https://localhost/statusmatch?",
+					"raw": "https://localhost/statusmatch",
 					"protocol": "https",
 					"host": [
 						"localhost"
 					],
 					"path": [
 						"statusmatch"
-					],
-					"query": [
-						{
-							"key": "",
-							"value": null
-						}
 					]
 				}
 			},
@@ -528,7 +523,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"matchId\" : 2\n}",
+					"raw": "{\n    \"matchId\" : 2,\n    \"type\": \"JSON\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -726,7 +721,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"dateFrom\" : \"2022-09-12\",     \n    \"dateTo\" : \"2022-09-12\"\n}",
+					"raw": "{\n    \"dateFrom\" : \"2022-09-14\",     \n    \"dateTo\" : \"2022-09-20\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -798,7 +793,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"matchId\" : 2\n}",
+					"raw": "{\n    \"matchId\" : 2,\n    \"type\": \"FEN\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
