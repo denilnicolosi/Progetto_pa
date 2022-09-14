@@ -4,13 +4,6 @@ import {ErrorEnum, Message} from '../factory/Message'
 
 const errorFactory: ErrorFactory = new ErrorFactory();
 
-
-/**
- * Check if the input body contains valid email
- * @param req user request
- * @param res response
- * @param next next middleware
- */
  export const checkInputEmail = function (req: any, res: any, next: any) {
     try {
       //checking if email is valid
@@ -64,6 +57,7 @@ const errorFactory: ErrorFactory = new ErrorFactory();
 
   export const checkRoleAdmin = function (req: any, res: any, next: any) {
     try {
+      //check if role is Admin by decoding jwt
       if(req.headers.authorization){
         const decoded:any = <string>Jwt.decode(req.headers.authorization)
         if(decoded.role === "admin"){
@@ -75,15 +69,15 @@ const errorFactory: ErrorFactory = new ErrorFactory();
       }
     }
     catch (error:any){
-      next(ErrorEnum.DefaultError)
+      next(ErrorEnum.ForbiddenRole)
     } 
   }
 
   export const checkRolePlayer = function (req: any, res: any, next: any) {
     try {
+      //check if role is player by decoding jwt
       if(req.headers.authorization){
         const decoded:any = <string>Jwt.decode(req.headers.authorization)
-        console.log(decoded)
         if(decoded.role === "player"){
           next();
         }else{
@@ -93,13 +87,13 @@ const errorFactory: ErrorFactory = new ErrorFactory();
       }
     }
     catch (error:any){
-      next(ErrorEnum.DefaultError)
+      next(ErrorEnum.ForbiddenRole)
     } 
   }
 
   export const checkInputToken = function (req: any, res: any, next: any) {
     try {
-      //checking if token input is valid
+      //checking if token input is valid, it must be number and greater than 0
       if (
         typeof req.body.token === "number" &&
         req.body.token > 0

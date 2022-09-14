@@ -6,6 +6,7 @@ class LoginSuccess implements Message {
     return {
       message: "Login success",
       status: HttpStatusCode.OK,
+      type: "application/json"
     };
   }
 }
@@ -15,6 +16,7 @@ class CreateMatchSuccess implements Message {
     return {
       message: "Match created",
       status: HttpStatusCode.CREATED,
+      type: "application/json"
     };
   }
 }
@@ -24,6 +26,7 @@ class MoveSuccess implements Message {
     return {
       message: "Move success",
       status: HttpStatusCode.OK,
+      type: "application/json"
     };
   }
 }
@@ -33,6 +36,7 @@ class PlayedMatchSuccess implements Message {
     return {
       message: "Get played match success",
       status: HttpStatusCode.OK,
+      type: "application/json"
     };
   }
 }
@@ -42,6 +46,7 @@ class StatusMatchSuccess implements Message {
     return {
       message: "Get status match success",
       status: HttpStatusCode.OK,
+      type: "application/json"
     };
   }
 }
@@ -51,6 +56,7 @@ class HistoryMovesSuccess implements Message {
     return {
       message: "Get history moves success",
       status: HttpStatusCode.OK,
+      type: "application/json"
     };
   }
 }
@@ -60,6 +66,7 @@ class PlayersRankSuccess implements Message {
     return {
       message: "Get players rank success",
       status: HttpStatusCode.OK,
+      type: "application/json"
     };
   }
 }
@@ -69,6 +76,7 @@ class TokenGetSuccess implements Message {
     return {
       message: "Get token success",
       status: HttpStatusCode.OK,
+      type: "application/json"
     };
   }
 }
@@ -78,6 +86,7 @@ class TokenChargeSuccess implements Message {
     return {
       message: "Token charge success",
       status: HttpStatusCode.OK,
+      type: "application/json"
     };
   }
 }
@@ -87,6 +96,7 @@ class EndMatchSuccessClose implements Message {
     return {
       message: "End match success",
       status: HttpStatusCode.OK,
+      type: "application/json"
     };
   }
 }
@@ -96,6 +106,7 @@ class EndMatchSuccessCloseRequest1 implements Message {
     return {
       message: "Close request from player 1 success",
       status: HttpStatusCode.OK,
+      type: "application/json"
     };
   }
 }
@@ -105,6 +116,7 @@ class EndMatchSuccessCloseRequest2 implements Message {
     return {
       message: "Close request from player 2 success",
       status: HttpStatusCode.OK,
+      type: "application/json"
     };
   }
 }
@@ -114,11 +126,12 @@ class DefaultSuccess implements Message {
     return {
       message: "Good results",
       status: HttpStatusCode.OK,
+      type: "application/json"
     };
   }
 }
 
-//classe del success factory, crea i messaggi di successo
+//class to factory the error response
 export class SuccessFactory extends MessageFactory{
     
   constructor() {super()}

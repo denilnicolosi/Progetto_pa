@@ -1,14 +1,17 @@
+//interface of Response
 export interface Response {
-    message: string;
-    status: number;
+    message: string; //message of the response
+    status: number; //HTTP status code
+    data?: string; //data to return in the response
+    type: string; //type of Content-Type to set into header response
 }
 
 export interface Message {
-    getResponse(): Response;
+    getResponse(): Response; 
 }
 
 export enum SuccessEnum {
-    //Success dal controller
+    //Success message
     LoginSuccess,
     CreateMatchSuccess,
     MoveSuccess,
@@ -25,7 +28,7 @@ export enum SuccessEnum {
 }
 
 export enum ErrorEnum {
-    //errori dal controller
+    //Internal error
     LoginError,
     CreateMatchError,
     MoveError,
@@ -38,7 +41,7 @@ export enum ErrorEnum {
     EndMatchError,
     DefaultError,
     
-    //errori del middleware
+    //bad request error
     EmailNotValidAddress,
     LoginBadRequest,
     CreateMatchBadRequest,
@@ -47,10 +50,11 @@ export enum ErrorEnum {
     StatusMatchBadRequest,
     HistoryMovesBadRequest,
     PlayerRankBadRequest,
-    TokenGetBadRequest,
     TokenChargeBadRequest,
     EndMatchBadRequest,  
+    MatchIdBadRequest,
 
+    //specific error
     CreateMatchNotAllowed,
     MoveNotAllowedError,
     NotYourTurn,
@@ -61,7 +65,7 @@ export enum ErrorEnum {
     WaitEndMatch
 }
 
-
+//enum of http status code
 export enum HttpStatusCode {  
     CONTINUE = 100,   
     SWITCHING_PROTOCOLS = 101,   
@@ -126,6 +130,7 @@ export enum HttpStatusCode {
     NETWORK_AUTHENTICATION_REQUIRED = 511
 }
 
+//abstract class to messageFactory, used by ErrorFactory and SuccessFactory
 export abstract class MessageFactory {
     
     constructor() {}
