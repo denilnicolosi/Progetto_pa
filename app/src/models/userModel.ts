@@ -21,9 +21,8 @@ export const User = sequelize.define('users', {
     //freezeTableName: true
 });
 
-
+//get user data
 export async function getUser(userEmail:string) {
-    
     return await User.findOne({
         raw:true,
         where:{
@@ -32,18 +31,16 @@ export async function getUser(userEmail:string) {
     });    
 
 }
-
+//set token amount
 export async function setToken(userEmail:string, token: number) {
-    
     return await User.update({ token: token },{
     where:{
         email: userEmail
     }
     });    
 }
-
+//get token amount
 export async function getToken(userEmail:string) {
-  
     return await User.findOne({
         raw: true,
         attributes: ['token'],

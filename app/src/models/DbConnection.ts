@@ -2,7 +2,7 @@ import {Sequelize} from 'sequelize';
 
 //singleton pattern implementation
 export class DbConnection {
-    //istance singleton DbConnectio
+    //istance singleton DbConnection
     private static instance: DbConnection;
     private connection: Sequelize;
     //default constructor
@@ -28,7 +28,7 @@ export class DbConnection {
 	}
     //getConnection method
     public static getConnection(): Sequelize {
-        //if it is first initialization create DbConnection ogject
+        //if it is first initialization create DbConnection object
         if (!DbConnection.instance) {
             DbConnection.instance = new DbConnection();
         }

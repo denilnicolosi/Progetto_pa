@@ -6,7 +6,7 @@ const errorFactory: ErrorFactory = new ErrorFactory();
 
  export const checkInputEmail = function (req: any, res: any, next: any) {
     try {
-      //checking if email is valid
+      //checking if email is valid (is string and respect the pattern <user>@<server>.<domain>)
       if (
         typeof req.body.email !== "string"     
       ) {
@@ -26,7 +26,7 @@ const errorFactory: ErrorFactory = new ErrorFactory();
 
  export const checkInputPassword = function (req: any, res: any, next: any) {
     try {
-      //checking if password is valid
+      //checking if password is valid (it must be max 50 char)
       if (
         typeof req.body.password !== "string" ||
         req.body.password.length > 50

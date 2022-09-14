@@ -25,7 +25,7 @@ export const Moves = sequelize.define('moves', {
     timestamps: false
 });
 
-
+//insert new moves
 export async function insertMove(new_matchId:number, new_from:any, new_to:any, new_boardConfiguration:string) {
     return await Moves.create({
         matchid: new_matchId,
@@ -34,7 +34,7 @@ export async function insertMove(new_matchId:number, new_from:any, new_to:any, n
         boardConfiguration: new_boardConfiguration
       });
 }
-
+//get last board configuration
 export async function getLastBoardConfiguration(input_matchId:number) {
     const result:any = await Moves.findOne({
         raw: true,
@@ -49,7 +49,7 @@ export async function getLastBoardConfiguration(input_matchId:number) {
     return JSON.parse(result.boardConfiguration)
 }
 
-
+//get all previus moves from the match
 export async function getHistoryFromMatch(input_matchId:number) {
     return await Moves.findAll({
         raw: true,
@@ -62,8 +62,8 @@ export async function getHistoryFromMatch(input_matchId:number) {
     });      
 }
 
+//return the moves count by matches
 export async function getMovesCountByMatch(input_matchId:number){
-    
     const result:any= await Moves.findOne({
         raw: true,
         attributes: [
@@ -74,6 +74,6 @@ export async function getMovesCountByMatch(input_matchId:number){
         }, 
         group: 'matchid' ,
     })
-
+    //result.conteggio indicates the number of moves including the initialization move that should be excluded from the players' move count
     return result.conteggio-1
 }
