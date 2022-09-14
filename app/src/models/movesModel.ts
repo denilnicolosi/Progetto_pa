@@ -46,7 +46,11 @@ export async function getLastBoardConfiguration(input_matchId:number) {
             ["moveid", "DESC"]
         ]         
     });      
-    return JSON.parse(result.boardConfiguration)
+
+    if(result!=null)
+        return JSON.parse(result.boardConfiguration)        
+    else
+        return null
 }
 
 //get all previus moves from the match

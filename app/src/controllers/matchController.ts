@@ -265,10 +265,15 @@ export async function statusMatch(req:any, res:any){
         //get match status from DB
         const match = JSON.parse(await modelMatches.getMatchesById(matchId))
         //get last board configuration from DB
+      
         const boardConfiguration = await modelMoves.getLastBoardConfiguration(matchId)
-        //compose result
-        result = successFactory.getMessage(SuccessEnum.StatusMatchSuccess).getResponse()
-        result.data = boardConfiguration
+        if(boardConfiguration!=null){           
+            //compose result
+            result = successFactory.getMessage(SuccessEnum.StatusMatchSuccess).getResponse()
+            result.data = boardConfiguration
+        }else{
+            result = errorFactory.getMessage(ErrorEnum.StatusMatchBadRequest).getResponse()  
+        }
     } catch(err){
         //compose error
         result = errorFactory.getMessage(ErrorEnum.StatusMatchError).getResponse()        
@@ -294,20 +299,24 @@ export async function historyMoves(req:any, res:any) {
     try{
         //get history by matches from DB
         const history:any = await modelMoves.getHistoryFromMatch(matchId)
-        
-        var i = 0
-        for (let elem of history) {
-            //rewrite the moveid to make it contextual to the current match
-            elem.moveid = i
-            i = i + 1;
-            //if user have requested the FEN notation for the cheesboard do the conversion
-            if (req.body.type == "FEN"){
-                elem.boardConfiguration = getFen(JSON.parse(elem.boardConfiguration))
-            }
-        }  
-        //compose the move history 
-        result = successFactory.getMessage(SuccessEnum.HistoryMovesSuccess).getResponse()
-        result.data = {"history": history}
+        if(history.length>0){
+            var i = 0
+            for (let elem of history) {
+                //rewrite the moveid to make it contextual to the current match
+                elem.moveid = i
+                elem.boardConfiguration = JSON.parse(elem.boardConfiguration)
+                i = i + 1;
+                //if user have requested the FEN notation for the cheesboard do the conversion
+                if (req.body.type == "FEN"){
+                    elem.boardConfiguration = getFen(elem.boardConfiguration)
+                }
+            }  
+            //compose the move history 
+            result = successFactory.getMessage(SuccessEnum.HistoryMovesSuccess).getResponse()
+            result.data = {"history": history}
+        }else{
+            result = errorFactory.getMessage(ErrorEnum.HistoryMovesBadRequest).getResponse()
+        }
     } catch(err){
         //compose error
         result = errorFactory.getMessage(ErrorEnum.HistoryMovesError).getResponse()
