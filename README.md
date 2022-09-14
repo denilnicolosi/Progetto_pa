@@ -120,7 +120,7 @@ Tutte le rotte necessitano come corpo della richiesta un oggetto JSON con i para
 
 Esempio:
 
-<a><img src="images/esempi/login.png" height='600' align="center"/></a>
+<a><img src="images/esempi/login.png" height='500' align="center"/></a>
 
 ### /newgame     
 - Metodo: ```POST```
@@ -134,7 +134,7 @@ Esempio:
 
 Esempio:
 
-<a><img src="images/esempi/newgame.png" height='600' align="center"/></a>
+<a><img src="images/esempi/newgame.png" height='500' align="center"/></a>
 
 ### /move 
 - Metodo: ```POST```
@@ -150,7 +150,7 @@ Esempio:
 
 Esempio:
 
-<a><img src="images/esempi/newgame.png" height='600' align="center"/></a>
+<a><img src="images/esempi/newgame.png" height='500' align="center"/></a>
 
 
 
@@ -165,7 +165,7 @@ Esempio:
 - Formato risposta: ```application/json```
 - Descrizione: Ritorna la lista di partite giocate dall'utente nell'intervallo temporale specificato dalle due date passate nel body.
 
-<a><img src="images/esempi/playedmatch.png" height='600' align="center"/></a>
+<a><img src="images/esempi/playedmatch.png" height='500' align="center"/></a>
 
 
 ### /statusmatch 
@@ -178,7 +178,7 @@ Esempio:
 - Formato risposta: ```application/json```
 - Descrizione: Ritorna lo stato della partita specificata come parametro
 
-<a><img src="images/esempi/statusmatch.png" height='600' align="center"/></a>
+<a><img src="images/esempi/statusmatch.png" height='500' align="center"/></a>
 
 ### /historymoves
 - Metodo: ```GET```
@@ -191,9 +191,9 @@ Esempio:
     - ```FEN``` : ritorna la board configuration dopo ogni mossa in formato FEN
 - Parametri facoltativi: ```/```
 - Formato risposta: ```application/json```
-- Descrizione: Ritorna lo storico delle mosse della partita specificata come parametro, il formato della board configuration può essere specificato in fase di richiesta. NB ogni partita include una prima mossa di configurazione che ha i valori di from e to settati a null.
+- Descrizione: Ritorna lo storico delle mosse della partita specificata come parametro, il formato della board configuration può essere specificato in fase di richiesta. La board configuration per ogni mossa è la configurazione della scacchiera dopo l'esecuzione della mossa riportata. NB ogni partita include una prima mossa di configurazione che ha i valori di from e to settati a null.
 
-<a><img src="images/esempi/historymoves.png" height='600' align="center"/></a>
+<a><img src="images/esempi/historymoves.png" height='500' align="center"/></a>
 
 ### /playersrank 
 - Metodo: ```GET```
@@ -207,7 +207,7 @@ Esempio:
 - Formato risposta: ```application/json```
 - Descrizione: Ritorna la classifica dei giocatori per numero di partite vinte secondo l'ordinamento specificato
 
-<a><img src="images/esempi/playersrank.png" height='600' align="center"/></a>
+<a><img src="images/esempi/playersrank.png" height='500' align="center"/></a>
 
 ### /token
 - Metodo: ```GET```
@@ -218,7 +218,7 @@ Esempio:
 - Formato risposta: ```application/json```
 - Descrizione: Ritorna la quantità di token del giocatore che ne fa richiesta
 
-<a><img src="images/esempi/GET_token.png" height='600' align="center"/></a>
+<a><img src="images/esempi/GET_token.png" height='500' align="center"/></a>
 
 ### /token       
 - Metodo: ```PUT```
@@ -231,7 +231,7 @@ Esempio:
 - Formato risposta: ```application/json```
 - Descrizione: Assegna un quantitativo di token ad un certo utente
 
-<a><img src="images/esempi/PUT_token.png" height='600' align="center"/></a>
+<a><img src="images/esempi/PUT_token.png" height='500' align="center"/></a>
 
 ### /endmatch    
 - Metodo: ```PUT```
@@ -242,7 +242,7 @@ Esempio:
 - Formato risposta: ```application/json```
 - Descrizione: Nel caso l'utente che esegue questa richiesta ha una partita aperta contro l'IA la partita viene chiusa. Nel caso in cui l'utente ha una partita aperta contro un altro utente ed è il primo ad eseguire questa richiesta la partita viene posta in uno stato di closed_request e se l'altro utente esegue a sua volta questa rotta la partita viene chiusa definitivamente. NB non è possibile passare dallo stato di closed_request ad open
 
-<a><img src="images/esempi/endmatch.png" height='600' align="center"/></a>
+<a><img src="images/esempi/endmatch.png" height='500' align="center"/></a>
 
 ## 📑 Progettazione
 
@@ -268,121 +268,128 @@ Tutte le richieste sono in json
 ### Diagrammi UML
 #### Casi d'uso
 
-<a><img src="images/uml/casi_uso.png" height='600' align="center"/></a>
+<a><img src="images/uml/casi_uso.png" height='500' align="center"/></a>
 
 #### ```/login ```
 Nel caso di successo: 
 
-<a><img src="images/uml/sequence_diagram-_login.png" height='600' align="center"/></a>
+<a><img src="images/uml/sequence_diagram-_login.png" height='500' align="center"/></a>
 
 Nel caso di errore:
 
-<a><img src="images/uml/sequence_diagram-_login-2.png" height='600' align="center"/></a>
+<a><img src="images/uml/sequence_diagram-_login-2.png" height='500' align="center"/></a>
      
 #### ```/newgame``` 
 Nel caso di successo: 
 
-<a><img src="images/uml/sequence_diagram-_newgame.png" height='600' align="center"/></a>
+<a><img src="images/uml/sequence_diagram-_newgame.png" height='500' align="center"/></a>
 
 Nel caso di errore:
 
-<a><img src="images/uml/sequence_diagram-_newgame-2.png" height='600' align="center"/></a>
+<a><img src="images/uml/sequence_diagram-_newgame-2.png" height='500' align="center"/></a>
 
 #### ```/move```      
 
 Nel caso di successo: 
 
-<a><img src="images/uml/sequence_diagram-_move.png" height='600' align="center"/></a>
+<a><img src="images/uml/sequence_diagram-_move.png" height='500' align="center"/></a>
 
 Nel caso di errore:
 
-<a><img src="images/uml/sequence_diagram-_move-2.png" height='600' align="center"/></a>
+<a><img src="images/uml/sequence_diagram-_move-2.png" height='500' align="center"/></a>
 
 #### ```/playedmatch```  
 
 Nel caso di successo: 
 
-<a><img src="images/uml/sequence_diagram-_playedmatch.png" height='600' align="center"/></a>
+<a><img src="images/uml/sequence_diagram-_playedmatch.png" height='500' align="center"/></a>
 
 Nel caso di errore:
 
-<a><img src="images/uml/sequence_diagram-_playedmatch-2.png" height='600' align="center"/></a>
+<a><img src="images/uml/sequence_diagram-_playedmatch-2.png" height='500' align="center"/></a>
 
 #### ```/statusmatch```  
 
 Nel caso di successo: 
 
-<a><img src="images/uml/sequence_diagram-_statusmatch.png" height='600' align="center"/></a>
+<a><img src="images/uml/sequence_diagram-_statusmatch.png" height='500' align="center"/></a>
 
 Nel caso di errore:
 
-<a><img src="images/uml/sequence_diagram-_statusmatch-2.png" height='600' align="center"/></a>
+<a><img src="images/uml/sequence_diagram-_statusmatch-2.png" height='500' align="center"/></a>
 
 #### ```/historymoves``` 
 Nel caso di successo: 
 
-<a><img src="images/uml/sequence_diagram-_historymoves.png" height='600' align="center"/></a>
+<a><img src="images/uml/sequence_diagram-_historymoves.png" height='500' align="center"/></a>
 
 Nel caso di errore:
 
-<a><img src="images/uml/sequence_diagram-_historymoves-2.png" height='600' align="center"/></a>
+<a><img src="images/uml/sequence_diagram-_historymoves-2.png" height='500' align="center"/></a>
 
 #### ```/playersrank```  
 Nel caso di successo: 
 
-<a><img src="images/uml/sequence_diagram-_playersrank.png" height='600' align="center"/></a>
+<a><img src="images/uml/sequence_diagram-_playersrank.png" height='500' align="center"/></a>
 
 Nel caso di errore:
 
-<a><img src="images/uml/sequence_diagram-_playersrank-2.png" height='600' align="center"/></a>
+<a><img src="images/uml/sequence_diagram-_playersrank-2.png" height='500' align="center"/></a>
 
 #### ```/token```        
 Nel caso di successo: 
 
-<a><img src="images/uml/sequence_diagram-_token get.png" height='600' align="center"/></a>
+<a><img src="images/uml/sequence_diagram-_token get.png" height='500' align="center"/></a>
 
 Nel caso di errore:
 
-<a><img src="images/uml/sequence_diagram-_token get-2.png" height='600' align="center"/></a>
+<a><img src="images/uml/sequence_diagram-_token get-2.png" height='500' align="center"/></a>
 
 #### ```/token```        
 Nel caso di successo: 
 
-<a><img src="images/uml/sequence_diagram-_token put.png" height='600' align="center"/></a>
+<a><img src="images/uml/sequence_diagram-_token put.png" height='500' align="center"/></a>
 
 Nel caso di errore:
 
-<a><img src="images/uml/sequence_diagram-_token put-2.png" height='600' align="center"/></a>
+<a><img src="images/uml/sequence_diagram-_token put-2.png" height='500' align="center"/></a>
 
 #### ```/endmatch```     
 Nel caso di successo: 
 
-<a><img src="images/uml/sequence_diagram-_endmatch.png" height='600' align="center"/></a>
+<a><img src="images/uml/sequence_diagram-_endmatch.png" height='500' align="center"/></a>
 
 Nel caso di errore:
 
-<a><img src="images/uml/sequence_diagram-_endmatch-2.png" height='600' align="center"/></a>
-
-
-
-
-
-
-
-
-
+<a><img src="images/uml/sequence_diagram-_endmatch-2.png" height='500' align="center"/></a>
 
 ### Pattern utilizzati
-- DAO con sequelize per la gestione del modello
-- singleton
-- mvc
-- middleware
-- Factory method: è uno dei design pattern fondamentali e rientra nella categoria dei pattern creazionali. Esso indirizza la creazione di oggetti in un unico metodo senza specificare l'esatta classe desiderata. Questo avviene grazie ad una interfaccia per creare un oggetto, ma lascia che le sottoclassi decidano quale oggetto istanziare.
+#### DAO
+Il DAO (Data Access Object) è un pattern architetturale che si occupa di separare la logica della applicazione dalla logica della persistenza dei dati. Si tratta di uno strato di applicazione che permette di astrarre dalla gestione del database, evitando quindi lo sviluppo di query direttamente nel codice. Questo consente una manutenibilità del codice maggiore, perché si può cambiare facilmente la tecnologia di persistenza e il DBMS modificando solo i parametri di configurazione e mantenendo lo stesso codice per i modelli. In particolare, tutte le operazioni CRUD dal modello vengono programmate con funzioni apposite che si occuperanno di tradurre la richiesta nel rispettivo linguaggio di interrogazione dello strato di persistenza configurato. In questo progetto è stato utilizzato Sequelize, un moderno ORM per TypeScript e Node.js che supporta diversi DBMS come postgres, MySql, MariaDB, SQLite, SQL Server e tanti altri. Esso permette di implementare tutte le funzioni dei DBMS mediante le funzioni di questa libreria. Inoltre con questo approccio, si prevengono attacchi del tipo SQL injection.
+#### Singleton
+Il singleton è un design pattern creazionale che ha lo scopo di garantire che di una determinata classe venga creata una e una sola istanza e di fornirne un punto di accesso globale. In questo progetto è stato utilizzato questo pattern per l'istanza della connessione del database, che deve essere univoca per tutta l'applicazione. Questo viene garantito dal fatto che il costruttore della classe è privato, e l'unico metodo pubblico che ritorna l'istanza ha una banale logica che: se l'oggetto non è ancora stato instanziato, lo istanzia in un attributo statico, se invece è gia stato istanziato all'interno di questo attributo, ritorna la suddetta istanza.
+
+<a><img src="images/esempi/singleton.png" height='250' align="center"/></a>
+
+#### MVC
+Model-view-controller è un pattern architetturale in grado di separare la logica di presentazione dei dati dalla logica di business. Nel progetto questo pattern è implementato parzialmente in quanto la componente View non rientrava nello scopo di quest'ultimo rendendolo di fatto un Model - Controller. Il controller è composto da due moduli ed implementano l'intera logica dell'applicazione. Il model implementa l'interfaccia con la base di dati e ne astrae il funzionamento al controller. Nel progetto il model è implementato tramite 3 componenti che hanno il compito di astrarre ognuno una tabella diversa della base dati.
+
+<a><img src="images/esempi/mvc.jpg" height='300' align="center"/></a>
+
+
+#### Middleware
+Il pattern middlewer è un design pattern che prevede una sequenza di componenti che vengono richiamate in cascata e ognuna implementa una logica di controllo sulla richiesta effettuata dall'utente. Ogni middleware al termine della logica invoca il metodo next() che invoca il prossimo middleware che si trova nella catena. Al termine della catena si trova un middleware speciale chiamato error-handling che è il punto di accesso a tutti gli errori del middleware. Questo componente provvede alla gestione degli errori che si verificano nella catena. In questo progetto è stato implementato questo pattern per controllare tutti i parametri ricevuti in input dall'utente e effetuare altre operazioni come il controllo della validità del token JWT e dei relativi permessi utente.
+
+<a><img src="images/esempi/middleware-chain.png" height='500' align="center"/></a>
+
+
+#### Factory method
+È uno dei design pattern fondamentali e rientra nella categoria dei pattern creazionali. Esso indirizza la creazione di oggetti in un unico metodo senza specificare l'esatta classe desiderata. Questo avviene grazie ad una interfaccia per creare un oggetto, ma lascia che le sottoclassi decidano quale oggetto istanziare.
 In questo progetto, questo pattern viene utilizzato per la gestione dei messaggi di errori e di successo, con i relativi codici di risposta http. In particolare, è stata realizzata l'interfaccia Message che viene implementata da tutti i messaggi, sia di errore che di successo. Sono state sviluppate poi due classi, ErrorFactory e SuccessFactory, che contengono rispettivamente i metodi getError() e getSuccess() che prendono in input la tipologia di messaggio e restituiscono in output un oggetto della classe di messaggio specificata, contenente cosi anche il codice http associato.
 <a><img src="images/uml/factory_method.png" height='400' align="center"/></a>
 
-## Funzionalità aggiuntive
-### HTTPS
+## ➕ Funzionalità aggiuntive
+-  HTTPS
 
 ## 🔍 Test
 Per testare l'applicazione si può utilizzare la seguente [collection](collection.json) postman inclusa nella repository.
