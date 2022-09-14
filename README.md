@@ -386,7 +386,8 @@ Il pattern middlewer è un design pattern che prevede una sequenza di componenti
 #### Factory method
 È uno dei design pattern fondamentali e rientra nella categoria dei pattern creazionali. Esso indirizza la creazione di oggetti in un unico metodo senza specificare l'esatta classe desiderata. Questo avviene grazie ad una interfaccia per creare un oggetto, ma lascia che le sottoclassi decidano quale oggetto istanziare.
 In questo progetto, questo pattern viene utilizzato per la gestione dei messaggi di errori e di successo, con i relativi codici di risposta http. In particolare, è stata realizzata l'interfaccia Message che viene implementata da tutti i messaggi, sia di errore che di successo. Sono state sviluppate poi due classi, ErrorFactory e SuccessFactory, che contengono rispettivamente i metodi getError() e getSuccess() che prendono in input la tipologia di messaggio e restituiscono in output un oggetto della classe di messaggio specificata, contenente cosi anche il codice http associato.
-<a><img src="images/uml/factory_method.png" height='400' align="center"/></a>
+
+<a><img src="images/uml/factory_method.png" height='300' align="center"/></a>
 
 ## ➕ Funzionalità aggiuntive
 -  HTTPS
